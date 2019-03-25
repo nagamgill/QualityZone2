@@ -16,13 +16,6 @@ dbx = dropbox.Dropbox(config.dropbox_api)
 dbx.users_get_current_account()
 
 
-
-
-def printme( str ):
-   "This prints a passed string into this function"
-   print(str)
-   return
-
 # assumes index is col 0
 def download_master(master_path):
     print("downloading master CSV file from dropbox...")
