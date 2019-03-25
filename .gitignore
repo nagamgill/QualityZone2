@@ -2,3 +2,4 @@
 .idea/
 dirpath/
 config.py
+__pycache__/
