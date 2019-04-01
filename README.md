@@ -1,5 +1,5 @@
 # QualityZone2
-v2
+QualityZone v2
 
 Data i/o via the dropox python API
 Data handling via pandas
