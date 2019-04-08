@@ -17,12 +17,14 @@ dbx.users_get_current_account()
 
 
 # assumes index is col 0
+# na_values defines ADDITIONAL na strings, not ONLY na strings
 def download_master(master_path):
     print("downloading master CSV file from dropbox...")
     _, res = dbx.files_download(master_path)
     df_master=pd.read_csv(res.raw,
-        index_col=0
-    )
+        index_col=0,
+        #na_values='NAN'
+        )
     df_master.index = pd.to_datetime(df_master.index)
     return df_master
 
@@ -32,7 +34,8 @@ def download_new_data(new_path, newcols):
     df_new=pd.read_csv(res.raw,
         header=1,
         skiprows=[2,3],
-        index_col=0
+        index_col=0,
+        na_values='NAN'
     )
     print("translating datalogger headers...")
     df_new.rename(columns=newcols, inplace=True)
@@ -60,7 +63,7 @@ def append_non_duplicates(a, b, col=None):
 
 # this will overwrite the previously existing file
 def df_to_dropbox(dataframe, upload_path):
-    df_string = dataframe.to_csv()
+    df_string = dataframe.to_csv(index_label='TIMESTAMP', na_rep='NaN')
     db_bytes = bytes(df_string, 'utf8')
     dbx.files_upload(
         f=db_bytes,
