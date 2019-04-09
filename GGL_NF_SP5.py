@@ -72,7 +72,7 @@ def format_for_dist(dataframe):
                     'Simulated Rain, Soil Moisture, CS616 period average, 25 cm, u sec',
                     'Simulated Rain, Soil Moisture, CS616 period average, 60 cm, u sec'
                   ], axis=1)
-    df = df.fillna('')
+
     dist_columns = {
         'Snow Melt, Soil Temperature, 7 cm, degree C':'SM-TEMP(C)-7CM',
         'Snow Melt, Soil Temperature, 20 cm, degree C':'SM-TEMP(C)-20CM',
@@ -94,6 +94,8 @@ def format_for_dist(dataframe):
     df.rename(columns=dist_columns, inplace=True)
     df.iloc[:,0:8] = df.iloc[:,0:8].round(2)
     df.iloc[:,9:16] = df.iloc[:, 9:16].round(3)
+
+    df = df.fillna('')
     return df
 
 df_master = QualityZone.download_master(master_path)

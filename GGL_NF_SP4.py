@@ -86,7 +86,7 @@ def format_for_dist(dataframe):
                             'GGSD_5, Distance, cm',
                             'GGSD_5, Retries, number',
                            ], axis=1)
-    df = df.fillna('')
+
     dist_columns = {
         'Simulated Rain, 5 cm, Temperature, degree C':'SR-TEMP(C)-5CM',
         'Simulated Rain, 5 cm, Volumetric Water Content, fraction':'SR-VOL WATER CONTENT-5CM',
@@ -106,6 +106,8 @@ def format_for_dist(dataframe):
     df.iloc[:, 5] = df.iloc[:, 5].round(3)
     df.iloc[:, 6] = df.iloc[:, 6].round(2)
     df.iloc[:, 7] = df.iloc[:, 7].round(3)
+
+    df = df.fillna('')
     return df
 
 df_master = QualityZone.download_master(master_path)

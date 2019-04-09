@@ -23,7 +23,6 @@ def download_master(master_path):
     _, res = dbx.files_download(master_path)
     df_master=pd.read_csv(res.raw,
         index_col=0,
-        #na_values='NAN'
         )
     df_master.index = pd.to_datetime(df_master.index)
     return df_master

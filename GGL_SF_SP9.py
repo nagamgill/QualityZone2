@@ -10,7 +10,8 @@ import plotly.graph_objs as go
 from plotly import tools
 import webbrowser
 import click
-
+import pandas as pd
+import numpy as np
 
 
 
@@ -59,7 +60,6 @@ def format_for_dist(dataframe):
         'Snow Melt, 20 cm, CS616 period average, u sec',
         ], axis=1)
 
-    dfd = dfd.fillna('')
     dist_columns = {
         'Simulated Rain, 5 cm, Volumetric Water Content, fraction':'SR-VOL WATER CONTENT-5CM',
         'Simulated Rain, 22 cm, Volumetric Water Content, fraction':'SR-VOL WATER CONTENT-22CM',
@@ -80,6 +80,7 @@ def format_for_dist(dataframe):
     dfd.iloc[:, 6] = dfd.iloc[:, 6].round(2)
     dfd.iloc[:, 7] = dfd.iloc[:, 7].round(2)
 
+    dfd = dfd.fillna('')
     return dfd
 
 df_master = QualityZone.download_master(master_path)

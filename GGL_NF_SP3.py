@@ -100,7 +100,6 @@ def format_for_dist(dataframe):
         'GGSD_4, Retries, number',
         ], axis=1)
 
-    dfd = dfd.fillna('')
     dist_columns = {
         'Snow Melt, 5 cm, Volumetric Water Content, fraction':'SM-VOL WATER CONTENT-5CM',
         'Snow Melt, 25 cm, Volumetric Water Content, fraction':'SM-VOL WATER CONTENT-25CM',
@@ -120,6 +119,8 @@ def format_for_dist(dataframe):
     dfd.iloc[:, 5] = dfd.iloc[:, 5].round(3)
     dfd.iloc[:, 6] = dfd.iloc[:, 6].round(2)
     dfd.iloc[:, 7] = dfd.iloc[:, 7].round(2)
+
+    dfd = dfd.fillna('')
     return dfd
 
 df_master = QualityZone.download_master(master_path)

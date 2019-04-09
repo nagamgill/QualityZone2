@@ -45,7 +45,7 @@ def format_for_dist(dataframe):
                            'Soil Moisture, CS616 period average, 5 cm, u sec',
                            'Soil Moisture, CS616 period average, 25 cm, u sec'
                            ], axis=1)
-    df = df.fillna('')
+
     dist_columns = {
         'Soill Moisture, Volumetric Water Content, 5 cm, fraction':'Vol Water Content-5cm',
         'Soil Temperature, 5 cm, degree C':'TEMP(C)-5cm',
@@ -57,6 +57,8 @@ def format_for_dist(dataframe):
     df['TEMP(C)-5cm'] = df['TEMP(C)-5cm'].round(2)
     df['Vol Water Content-25cm'] = df['Vol Water Content-25cm'].round(3)
     df['TEMP(C)-25cm'] = df['TEMP(C)-25cm'].round(2)
+
+    df = df.fillna('')
     return df
 
 df_master = QualityZone.download_master(master_path)

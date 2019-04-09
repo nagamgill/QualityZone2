@@ -60,7 +60,7 @@ def format_for_dist(dataframe):
         'GGL_NF_Met_Volumetric Water Content, PA_uS_Avg 22 cm'
         ], axis=1)
 
-
+    dfd = dfd.fillna('')
     dist_columns = {
         'GGL_NF_Met_tipping bucket rain gage, total, mm':'RAIN GAGE(MM)',
         'GGL_NF_Met_BP_Mbar':'BAROMETRIC PRESS(MBAR)',
@@ -97,7 +97,6 @@ def format_for_dist(dataframe):
     dfd.iloc[:, 14] = dfd.iloc[:, 14].round(3)
     dfd.iloc[:, 15] = dfd.iloc[:, 15].round(3)
 
-    dfd = dfd.fillna('')
     return dfd
 
 df_master = QualityZone.download_master(master_path)
@@ -146,165 +145,3 @@ pecos.io.write_monitoring_report(report_file, pm, test_results_graphics, QCI)
 QualityZone.qc_results_to_dropbox(dirpath)
 url = os.path.join(dirpath + '/' + system_name + '.html')
 webbrowser.open('file://' + url, new=2)
-
-
-
-plotly_df = df_updated.copy()
-
-# Radiation
-trace1 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Incoming Shortwave Radiation W/m^2'],
-    mode='lines',
-    name='Shortwave Radiation w/m^2',
-)
-trace2 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Net Radiation Corrected for Windspeed W/m^2 Average'],
-    mode='lines',
-    name='Corrected Net Radiation w/m^2',
-)
-trace3 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Net Radiation W/m^2 Average'],
-    mode='lines',
-    name='NR Average w/m^2',
-)
-trace4 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Air Temperature Average, Degrees C 2.6 meters'],
-    mode='lines',
-    name='Air T Deg C',
-)
-# ------------Wind--Battv---------------------------
-trace5 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Wind Speed Max m/sec'],
-    mode='lines',
-    name='Wind Speed Max',
-)
-trace6 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Wind Speed Average m/sec'],
-    mode='lines',
-    name='Wind Speed Avg',
-)
-
-trace7 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_WindSpeed Min m/sec'],
-    mode='lines',
-    name='Wind Speed Min',
-)
-trace8 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Battery Voltage Average'],
-    mode='lines',
-    name='Batt V DC',
-)
-# ------------Soil--TIPPING----BP-----------------------
-trace9 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_tipping bucket rain gage, total, mm'],
-    mode='lines',
-    name='Precipitation (mm)',
-)
-trace10 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['RH_GGL_NF_Met'],
-    mode='lines',
-    name='RH %',
-)
-trace11 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_BP_Mbar'],
-    mode='lines',
-    name='BP (mb)',
-)
-trace12 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Volumetric Water Content, Average fractional 22 cm'],
-    mode='lines',
-    name='22cm soil VWC',
-)
-trace13 = go.Scatter(
-    x=plotly_df.index,
-    y=plotly_df['GGL_NF_Met_Soil Temperature Average 22 cm '],
-    mode='lines',
-    name='22cm soil T',
-)
-
-# -------------------------------------------------------------------------
-fig = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
-                          shared_xaxes=True,
-                          vertical_spacing=0.001)
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 2, 1)
-fig.append_trace(trace3, 2, 1)
-fig.append_trace(trace4, 3, 1)
-
-# axis titles
-fig['layout']['yaxis1'].update(title='W/M^2')
-fig['layout']['yaxis2'].update(title='W/M^2')
-fig['layout']['yaxis3'].update(title='Deg C')
-# Plot Title
-fig['layout'].update(title='GGL_NF_Met_Rad_AirT')
-
-
-plot_url = py.plot(fig, filename='GGL_NF_Met_Rad_AirT')
-#plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_Met\\GGL_NF_Met_PythonScripts\\1.html')
-# -----------------------------------------------------------------------
-fig2 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
-                           shared_xaxes=True,
-                           vertical_spacing=0.001)
-fig2.append_trace(trace5, 1, 1)
-fig2.append_trace(trace6, 1, 1)
-fig2.append_trace(trace7, 1, 1)
-fig2.append_trace(trace8, 2, 1)
-
-# axis titles
-fig2['layout']['yaxis1'].update(title='M/S')
-fig2['layout']['yaxis2'].update(title='Volts DC')
-# Plot Title
-fig2['layout'].update(title='GGL_NF_Met_Wind_Batt')
-
-plot_url = py.plot(fig2, filename='GGL_NF_Met_Wind_Batt')
-#plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_Met\\GGL_NF_Met_PythonScripts\\2.html')
-# --------------------------------------------------------------------------
-fig3 = tools.make_subplots(rows=5, cols=1, specs=[[{}], [{}], [{}], [{}], [{}]],
-                           shared_xaxes=True,
-                           vertical_spacing=0.001)
-
-fig3.append_trace(trace9, 1, 1)
-fig3.append_trace(trace10, 2, 1)
-fig3.append_trace(trace11, 3, 1)
-fig3.append_trace(trace12, 4, 1)
-fig3.append_trace(trace13, 5, 1)
-# axis titles
-fig3['layout']['yaxis1'].update(title='mm')
-fig3['layout']['yaxis2'].update(title='%')
-fig3['layout']['yaxis3'].update(title='mB')
-fig3['layout']['yaxis4'].update(title='VWC')
-fig3['layout']['yaxis5'].update(title='Deg C')
-# Plot Title
-fig3['layout'].update(title='GGL_NF_Met_Precip_Soil_')
-
-#plotly.offline.plot(fig3, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_Met\\GGL_NF_Met_PythonScripts\\3.html')
-plot_url = py.plot(fig3, filename='GGL_NF_Met_Precip_Soil')
-
-
-
-if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
-    df_updated = QualityZone.download_master(working_file_path)
-    #print(updated_frame.dtypes)
-    print('dataframe replaced with updated data from Quality_Zone_working_data.csv')
-
-if click.confirm('Save updated dataset to master .csv?', default=False):
-    QualityZone.df_to_dropbox(df_updated, master_path)
-    print("Master .csv uploaded to dropbox")
-
-if click.confirm('Save updated dataset to distribute .csv?', default=False):
-    dist_df = format_for_dist(df_updated)
-    QualityZone.df_to_dropbox(dist_df, distribute_path)
-    print("distribute .csv formatted for distribution and uploaded to dropbox")
-
