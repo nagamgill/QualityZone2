@@ -62,7 +62,7 @@ def append_non_duplicates(a, b, col=None):
 
 # this will overwrite the previously existing file
 def df_to_dropbox(dataframe, upload_path):
-    df_string = dataframe.to_csv(index_label='TIMESTAMP', na_rep='NaN')
+    df_string = dataframe.to_csv(index_label='TIMESTAMP') #na_rep='NaN')
     db_bytes = bytes(df_string, 'utf8')
     dbx.files_upload(
         f=db_bytes,
