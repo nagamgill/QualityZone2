@@ -162,6 +162,7 @@ pm.check_corrupt([-6999, 'NAN'])
 pm.check_corrupt(['NaN', 'Na', 'na', 'np.nan', 'nan'])
 pm.check_corrupt(corrupt_values=['nan','NAN'])
 pm.check_range([12, 15.1], 'Battery Voltage, Minimum, DC Volts')
+pm.check_outlier([None, 5], 'GGSD_13, Distance, cm', window=168*3600)
 
 mask = pm.get_test_results_mask()
 QCI = pecos.metrics.qci(mask, pm.tfilter)
@@ -399,18 +400,12 @@ fig3 = go.Figure(data=data3, layout=layout3)
 plot_url = py.plot(fig3, filename='GGL_SF_SP10_Snow_Depth_Alternate')
 
 
-
-
-
-
-
-
 if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
     df_updated = QualityZone.download_master(working_file_path)
     #print(updated_frame.dtypes)
     print('dataframe replaced with updated data from Quality_Zone_working_data.csv')
 
-if click.confirm('Save updated dataset to master .csv?', default=False):
+if click.confirm('Save updated dataset as master .csv?', default=False):
     QualityZone.df_to_dropbox(df_updated, master_path)
     print("Master .csv uploaded to dropbox")
 
