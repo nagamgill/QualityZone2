@@ -18,66 +18,133 @@ print("Starting QualityZone")
 print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
 
-system_name = 'GGL_NF_MET'
+system_name = 'BT_MET'
 dropbox_base = '/Boulder Creek CZO Team Folder/BcCZO'
-master_file = '/Data/GordonGulch/GGL/GGL_NF_Met/GGL_NF_Met_ExcelandMeta/GGL_NF_Met_Master_WY2019.csv'
-new_file = '/Toughbook_Share/GordonGulch/GGL/Data/GGL_NF_Met_Raw/GGL_NF_MET_CR1000_GGL_NF_Met.dat'
-distribute_file = '/Data/GordonGulch/GGL/GGL_NF_Met/GGL_NF_Met_ExcelandMeta/GGL_NF_Met_Distribute_WY2019.csv'
+master_file = '/Data/Betasso/BetassoMet/QA_QC/BT_Met_ExcelandMeta/BetMet_WY2019_Master.csv'
+new_file = '/Toughbook_Share/bet_met/betmet_data/Betasso_Remote_CR1000_BetMet10.dat'
+distribute_file = '/Data/Betasso/BetassoMet/QA_QC/BT_Met_ExcelandMeta/BetMet_WY2019_Distribute.csv'
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
 
-
 newcols = {
-    'RECORD': 'GGL_NF_Met_Record Number',
-    'BattV_GGL_NF_Met_Avg': 'GGL_NF_Met_Battery Voltage Average',
-    'Rain_mm_GGL_NF_Met_Tot': 'GGL_NF_Met_tipping bucket rain gage, total, mm',
-    'BP_mbar_GGL_NF_Met_Avg': 'GGL_NF_Met_BP_Mbar',
-    'VW_22cm_GGL_NF_Met_Avg': 'GGL_NF_Met_Volumetric Water Content, Average fractional 22 cm',
-    'PA_uS_22cm_GGL_NF_Met_Avg': 'GGL_NF_Met_Volumetric Water Content, PA_uS_Avg 22 cm',
-    'SoilT_22cm_T107_C_GGL_NF_Met_Avg': 'GGL_NF_Met_Soil Temperature Average 22 cm ',
-    'WS_ms_250cm_GGL_NF_Met_Avg':'GGL_NF_Met_Wind Speed Average m/sec',
-    'WS_ms_250cm_GGL_NF_Met_Max':'GGL_NF_Met_Wind Speed Max m/sec',
-    'WS_ms_250cm_GGL_NF_Met_TMx':'GGL_NF_Met_Time of Wind Speed Max',
-    'WS_ms_250cm_GGL_NF_Met_Min':'GGL_NF_Met_WindSpeed Min m/sec',
-    'NR_Wm2_250cm_GGL_NF_Met_Avg':'GGL_NF_Met_Net Radiation W/m^2 Average',
-    'CNR_Wm2_250cm_GGL_NF_Met_Avg':'GGL_NF_Met_Net Radiation Corrected for Windspeed W/m^2 Average',
-    'SlrW_250cm_GGL_NF_Met_Avg':'GGL_NF_Met_Incoming Shortwave Radiation W/m^2',
-    'SlrMJ_250cm_GGL_NF_Met_Tot':'GGL_NF_Met_Incoming Shortwave Radiation MJ/m^2, Total',
-    'AirTC_250cm_GGL_NF_Met_Avg':'GGL_NF_Met_Air Temperature Average, Degrees C 2.6 meters',
-    'AirTC_250cm_GGL_NF_Met_Min':'AirTC_250cm_GGL_NF_Met_Min',
-    'AirTC_250cm_GGL_NF_Met_Max':'AirTC_250cm_GGL_NF_Met_Max',
-    'RH_GGL_NF_Met_Max':'RH_GGL_NF_Met_Max',
-    'RH_GGL_NF_Met_Min':'RH_GGL_NF_Met_Min',
-    'RH_GGL_NF_Met':'RH_GGL_NF_Met'
+    'RECORD': 'Record Number (datalogger value)',
+    'Batt_Volt_Min':'Battery Voltage, Minimum, DC Volts',
+    'Batt_Volt_TMn':'Time of Battery Voltage, Minimum',
+    'LoggerPanelTemp_Avg':'Wiring Panel Temperature, Average, Deg C',
+    'BaroPress_Avg':'barometric pressure, uncorrected to msl, mbar',
+    'Rain_mm_Tot':'tipping bucket rain gage, total, mm',
+    'SoilTmp_15cm_Avg':'soil temperature, 15cm depth, average, Degrees C',
+    'VWC_CS616_15cm_Avg':'soil moisture 15cm depth, average, fraction',
+    'PA_CS616_15cm_Avg':'soil moisture, 15cm depth, average, period average',
+    'SoilHeatFlux_Avg':'soil heat flux, average, 15cm depth, watts/m^2',
+    'AirTemp_2m_Avg':'air temperature, average, 2m elevation, Degrees C',
+    'AirTemp_2m_Min':'air temperature, minimum, 2m elevation, Degrees C',
+    'AirTemp_2m_TMn':'time of air temperature minimum, 2m elevation, Degrees C',
+    'AirTemp_2m_Max':'air temperature, maximum, 2m elevation, Degrees C',
+    'AirTemp_2m_TMx':'time of air temperature, maximum, 2m elevation, Degrees C',
+    'RH_2m_Avg':'relative humidity, average, 2m elevation, percent',
+    'RH_2m_Min':'relative humidity, minimum, 2m elevation, percent',
+    'RH_2m_TMn':'time of time of relative humidity minimum, 2m elevation, percent',
+    'RH_2m_Max':'relative humidity, maximum, 2m elevation, percent',
+    'RH_2m_TMx':'time of relative humidity maximum, 2m elevation, percent',
+    'WindSpeed_2m_Min':'Wind Speed, minimum, 2m elevation, meters/sec',
+    'WindSpeed_2m_TMn':'Time of wind speed minimum, 2m elevation',
+    'WindSpeed_2m_Max':'Wind Speed, maximum, 2m elevation, meters/sec',
+    'WindSpeed_2m_TMx':'Time of wind speed maximum, 2m elevation',
+    'WindSpeed_2m_avg_WVT':'Wind Speed, Average, 2m elevation, meters/sec',
+    'WindDir_2m_ave_WVT':'Wind Direction, average, 2m elevation, Degrees',
+    'WindDir_2m_SD1_WVT':'Standard Deviation of Wind Direction, 2m elevation, Degrees ',
+    'SlrRad_instant_Avg':'Incoming shortwave radiation, Average, 5m elevation, watts/m^2',
+    'SlrRad_instant_Min':'Incoming shortwave radiation, minimum, 5m elevation, watts/m^2',
+    'SlrRad_instant_TMn':'Time of incoming shortwave radiation minimum, 5m elevation',
+    'SlrRad_instant_Max':'incoming shortwave radiation, maximum, 5m elevation, watts/m^2',
+    'SlrRad_instant_TMx':'Time of incoming shortwave radiation maximum, 5m elevation',
+    'SlrRad_flux_Tot':'Incoming shortwave radiation, total, 5m elevation, MJoule/m^2',
+    'NetRad_Avg':'Net Radiation, average, 5m elevation, watts/m^2',
+    'CorrectedNetRad_Avg':'Net Radiation, average, corrected to wind speed, 5m elevation, watts/m^2',
+    'AirTemp_10m_Avg':'air temperature, average, 10m elevation, Degrees C',
+    'AirTemp_10m_Min':'air temperature, minimuim, 10m elevation, Degrees C',
+    'AirTemp_10m_TMn':'time of air temperature minimuim, 10m elevation, Degrees C',
+    'AirTemp_10m_Max':'air temperature, maximum, 10m elevation, Degrees C',
+    'AirTemp_10m_TMx':'time of air temperature, maximum, 10m elevation, Degrees C',
+    'RH_10m_Avg':'relative humidity, average, 10m elevation, percent',
+    'RH_10m_Min':'relative humidity, minimum, 10m elevation, percent',
+    'RH_10m_TMn':'time of relative humidity minimum, 10m elevation, percent',
+    'RH_10m_Max':'relative humidity, maximum, 10m elevation, percent',
+    'RH_10m_TMx':'time of relative humidity maximum, 10m elevation, percent',
+    'WindSpeed_10m_Min':'Wind Speed, minimum, 10m elevation, meters/sec',
+    'WindSpeed_10m_TMn':'Time of wind speed minimum, 10m elevation',
+    'WindSpeed_10m_Max':'Wind Speed, maximum, 10m elevation, meters/sec',
+    'WindSpeed_10m_TMx':'Time of wind speed maximum, 10m elevation',
+    'WindSpeed_10m_avg_WVT':'Wind Speed, Average, 10m elevation, meters/sec',
+    'WindDir_10m_avg_WVT':'Wind Direction, average, 10m elevation, Degrees',
+    'WindDir_10m_SD1_WVT':'Standard Deviation of Wind Direction, 10m elevation, Degrees ',
 }
+
+
 
 def format_for_dist(dataframe):
     dfd = dataframe.copy()
     dfd = dfd.drop([
-        'GGL_NF_Met_Record Number',
-        'GGL_NF_Met_Battery Voltage Average',
-        'GGL_NF_Met_Volumetric Water Content, PA_uS_Avg 22 cm'
+        'Record Number (datalogger value)',
+        'Battery Voltage, Minimum, DC Volts',
+        'Time of Battery Voltage, Minimum'
+        'Wiring Panel Temperature, Average, Deg C',
+        'soil moisture, 15cm depth, average, period average'
         ], axis=1)
 
     dfd = dfd.fillna('')
     dist_columns = {
-        'GGL_NF_Met_tipping bucket rain gage, total, mm':'RAIN GAGE(MM)',
-        'GGL_NF_Met_BP_Mbar':'BAROMETRIC PRESS(MBAR)',
-        'GGL_NF_Met_Volumetric Water Content, Average fractional 22 cm':'SOIL VOL WATER CONTENT(%)-22CM',
-        'GGL_NF_Met_Soil Temperature Average 22 cm ':'SOIL TEMP(C)-22CM',
-        'GGL_NF_Met_Wind Speed Average m/sec':'WINDSPEED(m/s)-2.5M(AVG)',
-        'GGL_NF_Met_Wind Speed Max m/sec':'WINDSPEED(m/s)-2.5M(MAX)',
-        'GGL_NF_Met_Time of Wind Speed Max':'WINDSPEED-2.5M(MAX) TIME',
-        'GGL_NF_Met_WindSpeed Min m/sec':'WINDSPEED(m/s)-2.5M(MIN)',
-        'GGL_NF_Met_Net Radiation W/m^2 Average':'NET RAD(W/m^2)-2.5M',
-        'GGL_NF_Met_Net Radiation Corrected for Windspeed W/m^2 Average':'NET RAD CORR(W/m^2)-2.5M',
-        'GGL_NF_Met_Incoming Shortwave Radiation W/m^2':'IN SW RAD(W/m^2)-2.5M(AVG)',
-        'GGL_NF_Met_Incoming Shortwave Radiation MJ/m^2, Total':'IN SW RAD(MJ/m^2)-2.5M(TOTAL)',
-        'GGL_NF_Met_Air Temperature Average, Degrees C 2.6 meters':'AIRTEMP(C)-2.5M(AVG)',
-        'RH_GGL_NF_Met_Max':'RH (MAX)',
-        'RH_GGL_NF_Met_Min':'RH (MIN)',
-        'RH_GGL_NF_Met':'RH (%)'
+        'barometric pressure, uncorrected to msl, mbar':'BAROMETRIC PRESS(MBAR)',
+        'tipping bucket rain gage, total, mm':'RAIN GAGE(MM)',
+        'soil temperature, 15cm depth, average, Degrees C':'SOIL TEMP(C)-15CM',
+        'soil moisture 15cm depth, average, fraction':'SOIL VOL WATER CONTENT(%)-15CM',
+        'soil heat flux, average, 15cm depth, watts/m^2':'SOIL HEAT FLUX(W/m^2)-15CM',
+        'air temperature, average, 2m elevation, Degrees C':'AIRTEMP(C)-2M(AVG)',
+        'air temperature, minimum, 2m elevation, Degrees C':'AIRTEMP(C)-2M(MIN)',
+        'time of air temperature minimuim, 2m elevation, Degrees C':'AIRTEMP-2M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'air temperature, maximum, 2m elevation, Degrees C':'AIRTEMP(C)-2M(MAX)',
+        'time of air temperature, maximum, 2m elevation, Degrees C':'AIRTEMP-2M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
+        'relative humidity, average, 2m elevation, percent':'RH-2M',
+        'relative humidity, minimum, 2m elevation, percent':'RH-2M(MIN)',
+        'time of time of relative humidity minimum, 2m elevation, percent':'RH-2M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'relative humidity, maximum, 2m elevation, percent':'RH-2M(MAX)',
+        'time of relative humidity maximum, 2m elevation, percent':'RH-2M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
+        'Wind Speed, minimum, 2m elevation, meters/sec':'WINDSPEED(m/s)-2M(MIN)',
+        'Time of wind speed minimum, 2m elevation':'WINDSPEED-2M(MIN) TIME DATE  MM/DD/YYYY HH24:MI',
+        'Wind Speed, maximum, 2m elevation, meters/sec':'WINDSPEED(m/s)-2M(MAX)',
+        'Time of wind speed maximum, 2m elevation':'WINDSPEED-2M(MAX) TIME DATE  MM/DD/YYYY HH24:MI',
+        'Wind Speed, Average, 2m elevation, meters/sec':'WINDSPEED(m/s)-2M(AVG)',
+        'Wind Direction, average, 2m elevation, Degrees':'WINDDIR-2M(DEGREES)',
+        'Standard Deviation of Wind Direction, 2m elevation, Degrees ':'WINDDIR-2M STD DEV(DEGREES)',
+        'Incoming shortwave radiation, Average, 5m elevation, watts/m^2':'IN SW RAD(W/m^2)-5M(AVG)',
+        'Incoming shortwave radiation, minimum, 5m elevation, watts/m^2':'IN SW RAD(W/m^2)-5M(MIN)',
+        'Time of incoming shortwave radiation minimum, 5m elevation':'IN SW RAD-5M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'incoming shortwave radiation, maximum, 5m elevation, watts/m^2':'IN SW RAD(W/m^2)-5M(MAX)',
+        'Time of incoming shortwave radiation maximum, 5m elevation':'IN SW RAD-5M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
+        'Incoming shortwave radiation, total, 5m elevation, MJoule/m^2':'IN SW RAD(MJ/m^2)-5M(TOTAL)',
+        'Net Radiation, average, 5m elevation, watts/m^2':'NET RAD(W/m^2)-5M',
+        'Net Radiation, average, corrected to wind speed, 5m elevation, watts/m^2':'NET RAD CORR(W/m^2)-5M',
+        'air temperature, average, 10m elevation, Degrees C':'AIRTEMP(C)-10M(AVG)',
+        'air temperature, minimuim, 10m elevation, Degrees C':'AIRTEMP(C)-10M(MIN)',
+        'time of air temperature minimuim, 10m elevation, Degrees C':'AIRTEMP-10M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'air temperature, maximum, 10m elevation, Degrees C':'AIRTEMP(C)-10M(MAX)',
+        'time of air temperature, maximum, 10m elevation, Degrees C':'AIRTEMP-10M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
+        'relative humidity, average, 10m elevation, percent':'RH-10M',
+        'relative humidity, minimum, 10m elevation, percent':'RH-10M(MIN)',
+        'time of relative humidity minimum, 10m elevation, percent':'RH-10M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'relative humidity, maximum, 10m elevation, percent':'RH-10M(MAX)',
+        'time of relative humidity maximum, 10m elevation, percent':'RH-10M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
+        'Wind Speed, minimum, 10m elevation, meters/sec':'WINDSPEED(m/s)-10M(MIN)',
+        'Time of wind speed minimum, 10m elevation':'WINDSPEED-10M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'Wind Speed, maximum, 10m elevation, meters/sec':'WINDSPEED(m/s)-10M(MAX)',
+        'Time of wind speed maximum, 10m elevation':'WINDSPEED-10M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
+        'Wind Speed, Average, 10m elevation, meters/sec':'WINDSPEED(m/s)-10M(AVG)',
+        'Wind Direction, average, 10m elevation, Degrees':'WINDDIR-10M(DEGREES)',
+        'Standard Deviation of Wind Direction, 10m elevation, Degrees ':'WINDDIR-10M STD DEV(DEGREES)'
+
+
     }
     dfd.rename(columns=dist_columns, inplace=True)
     dfd.iloc[:, 0] = dfd.iloc[:, 0].round(3)
@@ -113,7 +180,7 @@ pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
 pm.check_corrupt([-6999, 'NAN'])
-pm.check_range([12, 15.1], 'GGL_NF_Met_Battery Voltage Average')
+pm.check_range([12, 15.1], 'Battery Voltage, Minimum, DC Volts')
 
 mask = pm.get_test_results_mask()
 QCI = pecos.metrics.qci(mask, pm.tfilter)
@@ -145,3 +212,283 @@ pecos.io.write_monitoring_report(report_file, pm, test_results_graphics, QCI)
 QualityZone.qc_results_to_dropbox(dirpath)
 url = os.path.join(dirpath + '/' + system_name + '.html')
 webbrowser.open('file://' + url, new=2)
+
+
+
+plotly_df = df_updated.copy()
+
+#-----------------------------------Precip----BP----RH--------------------------------------
+trace1 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['barometric pressure, uncorrected to msl, mbar'],
+    mode='lines',
+    name='barometric pressure (mb)'
+)
+trace2 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['tipping bucket rain gage, total, mm'],
+    mode='lines',
+    name='precipitation (mm)',
+)
+trace3 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['relative humidity, average, 2m elevation, percent'],
+    mode='lines',
+    name='2m RH (%)',
+)
+trace4 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['relative humidity, average, 10m elevation, percent'],
+    mode='lines',
+    name='10m RH (%)'
+)
+
+
+fig = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig.append_trace(trace1, 1, 1)
+fig.append_trace(trace2, 2, 1)
+fig.append_trace(trace3, 3, 1)
+fig.append_trace(trace4, 3, 1)
+
+#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
+
+#plot_url = py.plot(fig, filename='BetMet_Met_AirT_RH_Precip')
+plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\1.html')
+
+#-------------------------------Radiation----AirT------------------------------------------------------------------
+trace5 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['incoming shortwave radiation, maximum, 5m elevation, watts/m^2'],
+    mode='lines',
+    name='incoming SW'
+)
+trace6 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Net Radiation, average, corrected to wind speed, 5m elevation, watts/m^2'],
+    mode='lines',
+    name='CNR',
+)
+trace7 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['air temperature, average, 2m elevation, Degrees C'],
+    mode='lines',
+    name='air T (2m)',
+)
+trace8 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['air temperature, average, 10m elevation, Degrees C'],
+    mode='lines',
+    name='Air T (10m)'
+)
+
+
+
+fig2 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig2.append_trace(trace5, 1, 1)
+fig2.append_trace(trace6, 1, 1)
+fig2.append_trace(trace7, 2, 1)
+fig2.append_trace(trace8, 2, 1)
+
+# axis titles
+fig2['layout']['yaxis1'].update(title='w/m^2')
+fig2['layout']['yaxis2'].update(title='Degrees C')
+# Plot Title
+fig2['layout'].update(title='Betasso Met Tower Radiation and Air T')
+
+#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
+
+#plot_url = py.plot(fig, filename='BetMet_Met_Radiation_Air')
+plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\2.html')
+
+
+#--------------------------------------------------Soil------------------
+
+trace9 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['soil heat flux, average, 15cm depth, watts/m^2'],
+    mode='lines',
+    name='soil heat flux'
+)
+trace10 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['soil moisture 15cm depth, average, fraction'],
+    mode='lines',
+    name='soil moisture 15cm',
+)
+trace11 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['soil temperature, 15cm depth, average, Degrees C'],
+    mode='lines',
+    name='soil temp 15cm',
+)
+trace12 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['air temperature, average, 2m elevation, Degrees C'],
+    mode='lines',
+    name='Air T (2m)'
+)
+
+
+
+fig3 = tools.make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig3.append_trace(trace9, 1, 1)
+fig3.append_trace(trace10, 2, 1)
+fig3.append_trace(trace11, 3, 1)
+fig3.append_trace(trace12, 4, 1)
+# Axis labels
+fig3['layout']['yaxis1'].update(title='w/m^2')
+fig3['layout']['yaxis2'].update(title='')
+fig3['layout']['yaxis3'].update(title='Degrees C')
+fig3['layout']['yaxis4'].update(title='Degrees C')
+# Plot Title
+fig3['layout'].update(title='Betasso Met Tower Soil')
+
+#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
+
+plot_url = py.plot(fig, filename='BetMet_Met_Soil')
+#plotly.offline.plot(fig3, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\3.html')
+#-----------------------------------------Precip & Wind-------------------------------------------------
+trace13 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['tipping bucket rain gage, total, mm'],
+    name='Tipping Bucket'
+)
+trace14 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Speed, maximum, 2m elevation, meters/sec'],
+    name='2m wind speed max',
+)
+
+fig4 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig4.append_trace(trace13, 1, 1)
+fig4.append_trace(trace14, 2, 1)
+
+# axis titles
+fig4['layout']['yaxis1'].update(title='mm')
+fig4['layout']['yaxis2'].update(title='m/s')
+# Plot Title
+fig4['layout'].update(title='Betasso Met Tower Tipping and Wind Speed')
+
+
+
+#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
+
+
+
+plot_url = py.plot(fig4, filename='multiple-axes-double')
+#plotly.offline.plot(fig4, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\4.html')
+
+#-------------------------------Wind--------------------------------------------------------------
+trace15 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Direction, average, 10m elevation, Degrees'],
+    mode='markers',
+    name='2m Wind Direction',
+
+)
+
+trace16 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Direction, average, 10m elevation, Degrees'],
+    mode='markers',
+    name='10m Wind Direction',
+
+)
+
+trace17 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Speed, minimum, 2m elevation, meters/sec'],
+    mode='lines',
+    name='2m wind speed min',
+)
+trace18 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Speed, Average, 2m elevation, meters/sec'],
+    mode='lines',
+    name='2m wind speed AVG',
+)
+trace19 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Speed, maximum, 2m elevation, meters/sec'],
+    mode='lines',
+    name='2m wind speed max'
+)
+trace20 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Speed, minimum, 10m elevation, meters/sec'],
+    mode='lines',
+    name='10m wind speed min',
+)
+trace21 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Speed, Average, 10m elevation, meters/sec'],
+    mode='lines',
+    name='10m wind speed AVG',
+)
+trace22 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Wind Speed, maximum, 10m elevation, meters/sec'],
+    mode='lines',
+    name='10m wind speed max'
+)
+
+
+fig5 = tools.make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig5.append_trace(trace15, 3, 1)
+fig5.append_trace(trace16, 4, 1)
+fig5.append_trace(trace17, 1, 1)
+fig5.append_trace(trace18, 1, 1)
+fig5.append_trace(trace19, 1, 1)
+fig5.append_trace(trace20, 2, 1)
+fig5.append_trace(trace21, 2, 1)
+fig5.append_trace(trace22, 2, 1)
+
+
+#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
+
+plot_url = py.plot(fig5, filename='BetMet_Met_Wind')
+#plotly.offline.plot(fig5, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\5.html')
+#-----------------------------------------------------
+
+trace23 = go.Scatter(
+    x=plotly_df.index,
+    y=plotly_df['Battery Voltage, Minimum, DC Volts'],
+    mode='lines',
+    name='Battery Voltage'
+)
+
+data = [trace23]
+
+plot_url = py.plot(data, filename='BetMet_Met_BattV')
+
+
+
+
+if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
+    df_updated = QualityZone.download_master(working_file_path)
+    #print(updated_frame.dtypes)
+    print('dataframe replaced with updated data from Quality_Zone_working_data.csv')
+
+if click.confirm('Save updated dataset to master .csv?', default=False):
+    QualityZone.df_to_dropbox(df_updated, master_path)
+    print("Master .csv uploaded to dropbox")
+
+if click.confirm('Save updated dataset to distribute .csv?', default=False):
+    dist_df = format_for_dist(df_updated)
+    QualityZone.df_to_dropbox(dist_df, distribute_path)
+    print("distribute .csv formatted for distribution and uploaded to dropbox")
+
+
+
+
+
