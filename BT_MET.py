@@ -7,6 +7,7 @@ import matplotlib as plt
 import matplotlib.pyplot as plt
 import plotly.plotly as py
 import plotly.graph_objs as go
+import plotly
 from plotly import tools
 import webbrowser
 import click
@@ -21,7 +22,7 @@ print(QualityZone.dbx.users_get_current_account())
 system_name = 'BT_MET'
 dropbox_base = '/Boulder Creek CZO Team Folder/BcCZO'
 master_file = '/Data/Betasso/BetassoMet/QA_QC/BT_Met_ExcelandMeta/BetMet_WY2019_Master.csv'
-new_file = '/Toughbook_Share/bet_met/betmet_data/Betasso_Remote_CR1000_BetMet10.dat'
+new_file = '/Toughbook_Share/Betasso/Bet_Met/BetMet_Data/Betasso_Remote_CR1000_BetMet10.dat'
 distribute_file = '/Data/Betasso/BetassoMet/QA_QC/BT_Met_ExcelandMeta/BetMet_WY2019_Distribute.csv'
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
@@ -64,8 +65,8 @@ newcols = {
     'NetRad_Avg':'Net Radiation, average, 5m elevation, watts/m^2',
     'CorrectedNetRad_Avg':'Net Radiation, average, corrected to wind speed, 5m elevation, watts/m^2',
     'AirTemp_10m_Avg':'air temperature, average, 10m elevation, Degrees C',
-    'AirTemp_10m_Min':'air temperature, minimuim, 10m elevation, Degrees C',
-    'AirTemp_10m_TMn':'time of air temperature minimuim, 10m elevation, Degrees C',
+    'AirTemp_10m_Min':'air temperature, minimum, 10m elevation, Degrees C',
+    'AirTemp_10m_TMn':'time of air temperature minimum, 10m elevation, Degrees C',
     'AirTemp_10m_Max':'air temperature, maximum, 10m elevation, Degrees C',
     'AirTemp_10m_TMx':'time of air temperature, maximum, 10m elevation, Degrees C',
     'RH_10m_Avg':'relative humidity, average, 10m elevation, percent',
@@ -89,7 +90,7 @@ def format_for_dist(dataframe):
     dfd = dfd.drop([
         'Record Number (datalogger value)',
         'Battery Voltage, Minimum, DC Volts',
-        'Time of Battery Voltage, Minimum'
+        'Time of Battery Voltage, Minimum',
         'Wiring Panel Temperature, Average, Deg C',
         'soil moisture, 15cm depth, average, period average'
         ], axis=1)
@@ -103,7 +104,7 @@ def format_for_dist(dataframe):
         'soil heat flux, average, 15cm depth, watts/m^2':'SOIL HEAT FLUX(W/m^2)-15CM',
         'air temperature, average, 2m elevation, Degrees C':'AIRTEMP(C)-2M(AVG)',
         'air temperature, minimum, 2m elevation, Degrees C':'AIRTEMP(C)-2M(MIN)',
-        'time of air temperature minimuim, 2m elevation, Degrees C':'AIRTEMP-2M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'time of air temperature minimum, 2m elevation, Degrees C':'AIRTEMP-2M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
         'air temperature, maximum, 2m elevation, Degrees C':'AIRTEMP(C)-2M(MAX)',
         'time of air temperature, maximum, 2m elevation, Degrees C':'AIRTEMP-2M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
         'relative humidity, average, 2m elevation, percent':'RH-2M',
@@ -127,8 +128,8 @@ def format_for_dist(dataframe):
         'Net Radiation, average, 5m elevation, watts/m^2':'NET RAD(W/m^2)-5M',
         'Net Radiation, average, corrected to wind speed, 5m elevation, watts/m^2':'NET RAD CORR(W/m^2)-5M',
         'air temperature, average, 10m elevation, Degrees C':'AIRTEMP(C)-10M(AVG)',
-        'air temperature, minimuim, 10m elevation, Degrees C':'AIRTEMP(C)-10M(MIN)',
-        'time of air temperature minimuim, 10m elevation, Degrees C':'AIRTEMP-10M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
+        'air temperature, minimum, 10m elevation, Degrees C':'AIRTEMP(C)-10M(MIN)',
+        'time of air temperature minimum, 10m elevation, Degrees C':'AIRTEMP-10M(MIN) TIME DATE MM/DD/YYYY HH24:MI',
         'air temperature, maximum, 10m elevation, Degrees C':'AIRTEMP(C)-10M(MAX)',
         'time of air temperature, maximum, 10m elevation, Degrees C':'AIRTEMP-10M(MAX) TIME DATE MM/DD/YYYY HH24:MI',
         'relative humidity, average, 10m elevation, percent':'RH-10M',
@@ -144,27 +145,60 @@ def format_for_dist(dataframe):
         'Wind Direction, average, 10m elevation, Degrees':'WINDDIR-10M(DEGREES)',
         'Standard Deviation of Wind Direction, 10m elevation, Degrees ':'WINDDIR-10M STD DEV(DEGREES)'
 
-
     }
     dfd.rename(columns=dist_columns, inplace=True)
-    dfd.iloc[:, 0] = dfd.iloc[:, 0].round(3)
+    '''dfd.iloc[:, 0] = dfd.iloc[:, 0].round(3)
     dfd.iloc[:, 1] = dfd.iloc[:, 1].round(3)
     dfd.iloc[:, 2] = dfd.iloc[:, 2].round(3)
     dfd.iloc[:, 3] = dfd.iloc[:, 3].round(3)
     dfd.iloc[:, 4] = dfd.iloc[:, 4].round(3)
     dfd.iloc[:, 5] = dfd.iloc[:, 5].round(3)
-    #dfd.iloc[:, 6] = dfd.iloc[:, 6].round(3)      timestamp column
-    dfd.iloc[:, 7] = dfd.iloc[:, 7].round(3)
+    dfd.iloc[:, 6] = dfd.iloc[:, 6].round(3)
+    #dfd.iloc[:, 7] = dfd.iloc[:, 7].round(3)
     dfd.iloc[:, 8] = dfd.iloc[:, 8].round(3)
-    dfd.iloc[:, 9] = dfd.iloc[:, 9].round(3)
+    #dfd.iloc[:, 9] = dfd.iloc[:, 9].round(3)
     dfd.iloc[:, 10] = dfd.iloc[:, 10].round(3)
     dfd.iloc[:, 11] = dfd.iloc[:, 11].round(3)
-    dfd.iloc[:, 12] = dfd.iloc[:, 12].round(3)
+    #dfd.iloc[:, 12] = dfd.iloc[:, 12].round(3)
     dfd.iloc[:, 13] = dfd.iloc[:, 13].round(3)
-    dfd.iloc[:, 14] = dfd.iloc[:, 14].round(3)
+    #dfd.iloc[:, 14] = dfd.iloc[:, 14].round(3)
     dfd.iloc[:, 15] = dfd.iloc[:, 15].round(3)
+    #dfd.iloc[:, 16] = dfd.iloc[:, 16].round(3)
+    dfd.iloc[:, 17] = dfd.iloc[:, 17].round(3)
+    #dfd.iloc[:, 18] = dfd.iloc[:, 18].round(3)
+    dfd.iloc[:, 19] = dfd.iloc[:, 19].round(3)
+    dfd.iloc[:, 20] = dfd.iloc[:, 20].round(3)
+    dfd.iloc[:, 21] = dfd.iloc[:, 21].round(3)
+    dfd.iloc[:, 22] = dfd.iloc[:, 22].round(3)
+    dfd.iloc[:, 23] = dfd.iloc[:, 23].round(3)
+    dfd.iloc[:, 24] = dfd.iloc[:, 24].round(3)
+    #dfd.iloc[:, 25] = dfd.iloc[:, 25].round(3)
+    dfd.iloc[:, 26] = dfd.iloc[:, 26].round(3)
+    #dfd.iloc[:, 27] = dfd.iloc[:, 27].round(3)
+    dfd.iloc[:, 28] = dfd.iloc[:, 28].round(3)
+    dfd.iloc[:, 29] = dfd.iloc[:, 29].round(3)
+    dfd.iloc[:, 30] = dfd.iloc[:, 30].round(3)
+    dfd.iloc[:, 31] = dfd.iloc[:, 31].round(3)
+    dfd.iloc[:, 32] = dfd.iloc[:, 32].round(3)
+    #dfd.iloc[:, 33] = dfd.iloc[:, 33].round(3)
+    dfd.iloc[:, 34] = dfd.iloc[:, 34].round(3)
+    #dfd.iloc[:, 35] = dfd.iloc[:, 35].round(3)
+    dfd.iloc[:, 36] = dfd.iloc[:, 36].round(3)
+    dfd.iloc[:, 37] = dfd.iloc[:, 37].round(3)
+    #dfd.iloc[:, 38] = dfd.iloc[:, 38].round(3)
+    dfd.iloc[:, 39] = dfd.iloc[:, 39].round(3)
+    #dfd.iloc[:, 40] = dfd.iloc[:, 40].round(3)
+    dfd.iloc[:, 41] = dfd.iloc[:, 41].round(3)
+    #dfd.iloc[:, 42] = dfd.iloc[:, 42].round(3)
+    dfd.iloc[:, 43] = dfd.iloc[:, 43].round(3)
+    #dfd.iloc[:, 44] = dfd.iloc[:, 44].round(3)
+    dfd.iloc[:, 45] = dfd.iloc[:, 45].round(3)
+    dfd.iloc[:, 46] = dfd.iloc[:, 46].round(3)'''
+
 
     return dfd
+
+
 
 df_master = QualityZone.download_master(master_path)
 df_new = QualityZone.download_new_data(new_path, newcols)
@@ -254,8 +288,8 @@ fig.append_trace(trace4, 3, 1)
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
 
-#plot_url = py.plot(fig, filename='BetMet_Met_AirT_RH_Precip')
-plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\1.html')
+plot_url = py.plot(fig, filename='BetMet_Met_AirT_RH_Precip')
+#plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\1.html')
 
 #-------------------------------Radiation----AirT------------------------------------------------------------------
 trace5 = go.Scatter(
@@ -301,8 +335,8 @@ fig2['layout'].update(title='Betasso Met Tower Radiation and Air T')
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
 
-#plot_url = py.plot(fig, filename='BetMet_Met_Radiation_Air')
-plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\2.html')
+plot_url = py.plot(fig2, filename='BetMet_Met_Radiation_Air')
+#plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\2.html')
 
 
 #--------------------------------------------------Soil------------------
@@ -351,7 +385,7 @@ fig3['layout'].update(title='Betasso Met Tower Soil')
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
 
-plot_url = py.plot(fig, filename='BetMet_Met_Soil')
+plot_url = py.plot(fig3, filename='BetMet_Met_Soil')
 #plotly.offline.plot(fig3, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\3.html')
 #-----------------------------------------Precip & Wind-------------------------------------------------
 trace13 = go.Scatter(
@@ -377,11 +411,7 @@ fig4['layout']['yaxis2'].update(title='m/s')
 # Plot Title
 fig4['layout'].update(title='Betasso Met Tower Tipping and Wind Speed')
 
-
-
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
-
-
 
 plot_url = py.plot(fig4, filename='multiple-axes-double')
 #plotly.offline.plot(fig4, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\4.html')
