@@ -24,8 +24,7 @@ distribute_file = '/Data/GordonGulch/GGL/GGL_NF_SP5/GGL_NF_SP5_M5_CR1000_Excelan
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
-# not sure if this is neccesary with the .CSV system, needs testing
-master_index = ''
+
 
 newcols = {
     'RECORD': 'Record Number (datalogger value)',
@@ -380,10 +379,6 @@ trace25 = go.Scattergl(
 battv = [trace25]
 plot_url = py.plot(battv, filename = 'QualityZone/GGL_NF_SP5/Battery_Voltage_GGL_NF_SP5')
 
-
-
-url = os.path.join(dirpath + system_name + '.html')
-webbrowser.open(url,new=2)
 
 
 

@@ -26,8 +26,7 @@ distribute_file = '/Data/GordonGulch/GGL/GGL_NF_SP4/GGL_NF_SP4_CR1000_ExcelandMe
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
-# not sure if this is neccesary with the .CSV system, needs testing
-master_index = ''
+
 
 newcols = {
     'RECORD': 'Record Number (datalogger value)',
@@ -124,7 +123,7 @@ pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
 pm.check_corrupt([-6999, 'NAN'])
-pm.check_range([12, 15.1], 'Battery Voltage, DC Volts')
+pm.check_range([12, 15.1], 'Battery Voltage, Minimum, DC Volts')
 
 mask = pm.get_test_results_mask()
 QCI = pecos.metrics.qci(mask, pm.tfilter)
@@ -309,9 +308,7 @@ fig2.append_trace(trace14, 2, 1)
 fig2.append_trace(trace15, 3, 1)
 fig2.append_trace(trace16, 4, 1)
 
-# axis titles
-fig2['layout']['yaxis1'].update(title='VWC Fraction')
-fig2['layout']['yaxis2'].update(title='Deg C')
+
 # Plot Title
 fig2['layout'].update(title='GGU_NF_SP4_Snow')
 
@@ -323,8 +320,6 @@ plot_url = py.plot(fig2, filename='2')
 
 #----------------------------------------------------------------------------------
 
-url = os.path.join(dirpath + system_name + '.html')
-webbrowser.open(url,new=2)
 
 
 if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
