@@ -57,7 +57,9 @@ def format_for_dist(dataframe):
     dfd = dfd.drop([
         'GGL_NF_Met_Record Number',
         'GGL_NF_Met_Battery Voltage Average',
-        'GGL_NF_Met_Volumetric Water Content, PA_uS_Avg 22 cm'
+        'GGL_NF_Met_Volumetric Water Content, PA_uS_Avg 22 cm',
+        'AirTC_250cm_GGL_NF_Met_Min',
+        'AirTC_250cm_GGL_NF_Met_Max'
         ], axis=1)
 
 
