@@ -32,7 +32,7 @@ newcols = {
     'BattV_Min': 'GGL_SF_Met Battery Voltage Minimum',
     'PTemp_C_Avg': 'PTemp_C_Avg',
     'Rain_mm_Tot': 'GGL_SF_Met tipping bucket rain gage, total, mm',
-    'BP_mmHg_Avg': 'GGL_SF_Met BP_mbar_Avg',
+    'BP_mbar_Avg': 'GGL_SF_Met BP_mbar_Avg',
     'VW_Avg': 'GGL_SF_Met Volumetric Water Content, Average fractional 22 cm',
     'PA_uS_Avg': 'GGL_SF_Met Volumetric Water Content, PA_uS_Avg 22 cm',
     'T107_C_Avg': 'GGL_SF_Met Soil Temperature Average 22 cm',
