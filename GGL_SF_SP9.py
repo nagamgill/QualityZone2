@@ -20,7 +20,7 @@ print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'GGL_SF_SP9'
-dropbox_base = '/Boulder Creek CZO Team Folder/BcCZO'
+dropbox_base = '/CZO/BcCZO'
 master_file = '/Data/GordonGulch/GGL/GGL_SF_SP9/GGL_SF_SP9_ExcelandMeta/GGL_SF_SP9_Master_WY2019.csv'
 new_file = '/Toughbook_Share/GordonGulch/GGL/Data/GGL_SF_SP9_Raw/GGL_SF_SP9_Tenmin.dat'
 distribute_file = '/Data/GordonGulch/GGL/GGL_SF_SP9/GGL_SF_SP9_ExcelandMeta/GGL_SF_SP9_Distribute_WY2019.csv'
@@ -87,7 +87,7 @@ df_master = QualityZone.download_master(master_path)
 df_new = QualityZone.download_new_data(new_path, newcols)
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
-working_file_path = '/Boulder Creek CZO Team Folder/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv'
+working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
 QualityZone.df_to_dropbox(df_updated, working_file_path)
 
 pecos.logger.initialize()
@@ -98,7 +98,7 @@ pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
 pm.check_corrupt([-6999, 'NAN'])
 pm.check_corrupt(['NaN', 'Na', 'na', 'np.nan', 'nan'])
-pm.check_corrupt(corrupt_values=['nan','NAN'])
+pm.check_corrupt(corrupt_values=['nan','NAN', '"NAN"'])
 pm.check_range([12, 15.1], 'Bat Volt (minimum)')
 
 mask = pm.get_test_results_mask()

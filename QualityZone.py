@@ -79,7 +79,7 @@ def qc_results_to_dropbox(qc_dir):
             try:
                 file_path = os.path.join(dir, file)
                 dest_path = os.path.join(
-                    '/Boulder Creek CZO Team Folder/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/Results/testing/',
+                    '/CZO/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/Results/testing/',
                     file)
                 print('Uploading %s to %s' % (file_path, dest_path))
                 with open(file_path, 'rb') as f:
