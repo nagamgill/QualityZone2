@@ -20,7 +20,7 @@ print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'BT_MET'
-dropbox_base = '/Boulder Creek CZO Team Folder/BcCZO'
+dropbox_base = '/CZO/BcCZO'
 master_file = '/Data/Betasso/BetassoMet/QA_QC/BT_Met_ExcelandMeta/BetMet_WY2019_Master.csv'
 new_file = '/Toughbook_Share/Betasso/Bet_Met/BetMet_Data/Betasso_Remote_CR1000_BetMet10.dat'
 distribute_file = '/Data/Betasso/BetassoMet/QA_QC/BT_Met_ExcelandMeta/BetMet_WY2019_Distribute.csv'
@@ -204,7 +204,7 @@ df_master = QualityZone.download_master(master_path)
 df_new = QualityZone.download_new_data(new_path, newcols)
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
-working_file_path = '/Boulder Creek CZO Team Folder/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv'
+working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
 QualityZone.df_to_dropbox(df_updated, working_file_path)
 
 pecos.logger.initialize()
