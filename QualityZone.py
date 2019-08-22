@@ -41,7 +41,7 @@ def download_new_data(new_path, newcols):
     df_new.index = pd.to_datetime(df_new.index)
     return df_new
 
-
+# this function requres the new dataframe index to begin sometime after the old dataframe index
 def append_non_duplicates(a, b, col=None):
     print("Appending new data onto master dataframe...")
     if ((a is not None and type(a) is not pd.core.frame.DataFrame) or (b is not None and type(b) is not pd.core.frame.DataFrame)):
@@ -91,3 +91,19 @@ def qc_results_to_dropbox(qc_dir):
                 print("Failed to upload %s\n%s" % (file, err))
 
     print("Finished upload.")
+
+
+
+def dbx_csv_folder_download(dbx_folder, outpath):
+    entries = dbx.files_list_folder(dbx_folder).entries
+    print("Downloading .csv files from dbx_folder")
+    for entry in entries:
+        if isinstance(entry, dropbox.files.FileMetadata) and entry.path_lower.endswith('.csv'):
+            md, res = dbx.files_download(entry.path_lower)
+            # 'wb' or "write binary" may cause Mac / PC compatibility issues - needs testing
+            with open (os.path.join(outpath + entry.name), 'wb') as out:
+                out.write(res.content)
+                print("Saving .csv files to outpath")
+
+
+
