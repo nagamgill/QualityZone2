@@ -215,7 +215,9 @@ pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
 pm.check_corrupt([-6999, 'NAN'])
 pm.check_range([12, 15.1], 'Battery Voltage, Minimum, DC Volts')
-
+pm.check_range([-20, 100], 'soil heat flux, average, 15cm depth, watts/m^2')
+pm.check_increment([.001,None], 'Wind Speed, maximum, 2m elevation, meters/sec', absolute_value=True, min_failures=5)
+pm.check_range([-200, 1000], 'Net Radiation, average, corrected to wind speed, 5m elevation, watts/m^2')
 mask = pm.get_test_results_mask()
 QCI = pecos.metrics.qci(mask, pm.tfilter)
 
@@ -252,25 +254,25 @@ webbrowser.open('file://' + url, new=2)
 plotly_df = df_updated.copy()
 
 #-----------------------------------Precip----BP----RH--------------------------------------
-trace1 = go.Scatter(
+trace1 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['barometric pressure, uncorrected to msl, mbar'],
     mode='lines',
     name='barometric pressure (mb)'
 )
-trace2 = go.Scatter(
+trace2 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['tipping bucket rain gage, total, mm'],
     mode='lines',
     name='precipitation (mm)',
 )
-trace3 = go.Scatter(
+trace3 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['relative humidity, average, 2m elevation, percent'],
     mode='lines',
     name='2m RH (%)',
 )
-trace4 = go.Scatter(
+trace4 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['relative humidity, average, 10m elevation, percent'],
     mode='lines',
@@ -292,25 +294,25 @@ plot_url = py.plot(fig, filename='BetMet_Met_AirT_RH_Precip')
 #plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\1.html')
 
 #-------------------------------Radiation----AirT------------------------------------------------------------------
-trace5 = go.Scatter(
+trace5 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['incoming shortwave radiation, maximum, 5m elevation, watts/m^2'],
     mode='lines',
     name='incoming SW'
 )
-trace6 = go.Scatter(
+trace6 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Net Radiation, average, corrected to wind speed, 5m elevation, watts/m^2'],
     mode='lines',
     name='CNR',
 )
-trace7 = go.Scatter(
+trace7 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['air temperature, average, 2m elevation, Degrees C'],
     mode='lines',
     name='air T (2m)',
 )
-trace8 = go.Scatter(
+trace8 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['air temperature, average, 10m elevation, Degrees C'],
     mode='lines',
@@ -341,25 +343,25 @@ plot_url = py.plot(fig2, filename='BetMet_Met_Radiation_Air')
 
 #--------------------------------------------------Soil------------------
 
-trace9 = go.Scatter(
+trace9 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['soil heat flux, average, 15cm depth, watts/m^2'],
     mode='lines',
     name='soil heat flux'
 )
-trace10 = go.Scatter(
+trace10 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['soil moisture 15cm depth, average, fraction'],
     mode='lines',
     name='soil moisture 15cm',
 )
-trace11 = go.Scatter(
+trace11 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['soil temperature, 15cm depth, average, Degrees C'],
     mode='lines',
     name='soil temp 15cm',
 )
-trace12 = go.Scatter(
+trace12 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['air temperature, average, 2m elevation, Degrees C'],
     mode='lines',
@@ -388,12 +390,12 @@ fig3['layout'].update(title='Betasso Met Tower Soil')
 plot_url = py.plot(fig3, filename='BetMet_Met_Soil')
 #plotly.offline.plot(fig3, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\3.html')
 #-----------------------------------------Precip & Wind-------------------------------------------------
-trace13 = go.Scatter(
+trace13 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['tipping bucket rain gage, total, mm'],
     name='Tipping Bucket'
 )
-trace14 = go.Scatter(
+trace14 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Speed, maximum, 2m elevation, meters/sec'],
     name='2m wind speed max',
@@ -417,7 +419,7 @@ plot_url = py.plot(fig4, filename='multiple-axes-double')
 #plotly.offline.plot(fig4, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\4.html')
 
 #-------------------------------Wind--------------------------------------------------------------
-trace15 = go.Scatter(
+trace15 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Direction, average, 10m elevation, Degrees'],
     mode='markers',
@@ -425,7 +427,7 @@ trace15 = go.Scatter(
 
 )
 
-trace16 = go.Scatter(
+trace16 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Direction, average, 10m elevation, Degrees'],
     mode='markers',
@@ -433,37 +435,37 @@ trace16 = go.Scatter(
 
 )
 
-trace17 = go.Scatter(
+trace17 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Speed, minimum, 2m elevation, meters/sec'],
     mode='lines',
     name='2m wind speed min',
 )
-trace18 = go.Scatter(
+trace18 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Speed, Average, 2m elevation, meters/sec'],
     mode='lines',
     name='2m wind speed AVG',
 )
-trace19 = go.Scatter(
+trace19 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Speed, maximum, 2m elevation, meters/sec'],
     mode='lines',
     name='2m wind speed max'
 )
-trace20 = go.Scatter(
+trace20 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Speed, minimum, 10m elevation, meters/sec'],
     mode='lines',
     name='10m wind speed min',
 )
-trace21 = go.Scatter(
+trace21 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Speed, Average, 10m elevation, meters/sec'],
     mode='lines',
     name='10m wind speed AVG',
 )
-trace22 = go.Scatter(
+trace22 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Wind Speed, maximum, 10m elevation, meters/sec'],
     mode='lines',
@@ -490,7 +492,7 @@ plot_url = py.plot(fig5, filename='BetMet_Met_Wind')
 #plotly.offline.plot(fig5, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\5.html')
 #-----------------------------------------------------
 
-trace23 = go.Scatter(
+trace23 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Battery Voltage, Minimum, DC Volts'],
     mode='lines',
@@ -500,6 +502,10 @@ trace23 = go.Scatter(
 data = [trace23]
 
 plot_url = py.plot(data, filename='BetMet_Met_BattV')
+
+data2 = [trace9, trace13]
+
+plot_url = py.plot()
 
 
 

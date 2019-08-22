@@ -58,7 +58,7 @@ def append_non_duplicates(a, b, col=None):
         bind = b.index.values
     take_rows = list(set(bind)-set(aind))
     take_rows = [i in take_rows for i in bind]
-    return(a.append( b.iloc[take_rows,:] ))
+    return(a.append( b.iloc[take_rows,:], sort=True))
 
 # this will overwrite the previously existing file
 def df_to_dropbox(dataframe, upload_path):
