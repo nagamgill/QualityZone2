@@ -28,19 +28,26 @@ raw_folder = os.path.join(dropbox_base + '/ToughBook_Share/GLV/GL4_Met/raw_data/
 master_path = os.path.join(dropbox_base + master_file)
 #new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
+
+# need to write some kind of tempfile cleanup
 local_raw = tempfile.mkdtemp()
 
 
-QualityZone.dbx_dat_folder_download(raw_folder, '/Users/dillon/Downloads/dbx_download_test/')
+QualityZone.dbx_dat_folder_download(raw_folder, local_raw)
 
 
 def concat_dat(dat_path):
-    df = pd.concat([pd.read_csv(f, skiprows=13, parse_dates=[['Date', 'Time']]) for f in glob.glob(os.path.join(raw_folder + '*.dat'))],
-                   ignore_index=True)
+    df = pd.concat([pd.read_csv(
+        f,
+        header=1,
+        skiprows=[2,3],
+        index_col=0,
+        na_values='NAN')
+        for f in glob.glob(os.path.join(local_raw + '/*.dat'))], sort=True)
     df.drop_duplicates(inplace=True)
     df.index = pd.to_datetime(df.index)
     df = df.sort_index(ascending=True)
     return df
 
 
-concat_dat('/Users/dillon/Downloads/dbx_download_test/')
+df = concat_dat('/Users/dillon/Downloads/dbx_download_test/')
