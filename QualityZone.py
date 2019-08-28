@@ -1,14 +1,6 @@
-import pecos
-import pandas as pd
-import matplotlib.pyplot as plt
+import glob
 import os
-import numpy as np
-import plotly.plotly as py
-import plotly.graph_objs as go
 import pandas as pd
-from plotly import tools
-import plotly
-import webbrowser
 import dropbox
 import config
 
@@ -103,7 +95,29 @@ def dbx_csv_folder_download(dbx_folder, outpath):
             # 'wb' or "write binary" may cause Mac / PC compatibility issues - needs testing
             with open (os.path.join(outpath + entry.name), 'wb') as out:
                 out.write(res.content)
-                print("Saving .csv files to outpath")
+                print("Saving %s to outpath" % (entry.name))
 
 
+def dbx_dat_folder_download(dbx_folder, outpath):
+    entries = dbx.files_list_folder(dbx_folder).entries
+    print("Downloading .dat files from dbx_folder")
+    for entry in entries:
+        if isinstance(entry, dropbox.files.FileMetadata) and entry.path_lower.endswith('.dat'):
+            md, res = dbx.files_download(entry.path_lower)
+            # 'wb' or "write binary" may cause Mac / PC compatibility issues - needs testing
+            with open (os.path.join(outpath + entry.name), 'wb') as out:
+                out.write(res.content)
+                print("Saving %s to outpath" % (entry.name))
 
+
+def concat_dat(dat_path):
+    df = pd.concat([pd.read_csv(f,
+            header=1,
+            skiprows=[2,3],
+            index_col=0,
+            na_values='NAN'
+            ) for f in glob.glob(os.path.join(dat_path + '*.dat')]), sort=True)
+    df.drop_duplicates(inplace=True)
+    df.index = pd.to_datetime(df.index)
+    df = df.sort_index(ascending=True)
+    return df

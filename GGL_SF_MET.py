@@ -27,6 +27,7 @@ master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
 
+
 newcols = {
     'RECORD': 'GGL_SF_Met Record Number',
     'BattV_Min': 'GGL_SF_Met Battery Voltage Minimum',
