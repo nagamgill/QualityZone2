@@ -110,3 +110,15 @@ def dbx_dat_folder_download(dbx_folder, outpath):
                 print("Saving %s to outpath" % (entry.name))
 
 
+def concat_dat(dat_path):
+    df = pd.concat([pd.read_csv(
+        f,
+        header=1,
+        skiprows=[2,3],
+        index_col=0,
+        na_values='NAN')
+        for f in glob.glob(os.path.join(dat_path + '/*.dat'))], sort=True)
+    df.drop_duplicates(inplace=True)
+    df.index = pd.to_datetime(df.index)
+    df = df.sort_index(ascending=True)
+    return df

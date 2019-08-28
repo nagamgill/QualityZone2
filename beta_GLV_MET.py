@@ -34,20 +34,4 @@ local_raw = tempfile.mkdtemp()
 
 
 QualityZone.dbx_dat_folder_download(raw_folder, local_raw)
-
-
-def concat_dat(dat_path):
-    df = pd.concat([pd.read_csv(
-        f,
-        header=1,
-        skiprows=[2,3],
-        index_col=0,
-        na_values='NAN')
-        for f in glob.glob(os.path.join(dat_path + '/*.dat'))], sort=True)
-    df.drop_duplicates(inplace=True)
-    df.index = pd.to_datetime(df.index)
-    df = df.sort_index(ascending=True)
-    return df
-
-
-df = concat_dat(local_raw)
+df = QualityZone.concat_dat(local_raw)
