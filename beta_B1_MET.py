@@ -101,7 +101,7 @@ df_new = QualityZone.concat_dat(local_raw, start_date='2018-10-01')
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
 # working file access
-working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
+working_file_path = os.path.join(dropbox_base + 'Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
 QualityZone.df_to_dropbox(df_updated, working_file_path)
 
 pecos.logger.initialize()
