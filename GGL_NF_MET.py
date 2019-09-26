@@ -19,7 +19,7 @@ print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'GGL_NF_MET'
-dropbox_base = '/Boulder Creek CZO Team Folder/BcCZO'
+dropbox_base = '/CZO/BcCZO'
 master_file = '/Data/GordonGulch/GGL/GGL_NF_Met/GGL_NF_Met_ExcelandMeta/GGL_NF_Met_Master_WY2019.csv'
 new_file = '/Toughbook_Share/GordonGulch/GGL/Data/GGL_NF_Met_Raw/GGL_NF_MET_CR1000_GGL_NF_Met.dat'
 distribute_file = '/Data/GordonGulch/GGL/GGL_NF_Met/GGL_NF_Met_ExcelandMeta/GGL_NF_Met_Distribute_WY2019.csv'
@@ -88,8 +88,8 @@ def format_for_dist(dataframe):
     dfd.iloc[:, 3] = dfd.iloc[:, 3].round(3)
     dfd.iloc[:, 4] = dfd.iloc[:, 4].round(3)
     dfd.iloc[:, 5] = dfd.iloc[:, 5].round(3)
-    #dfd.iloc[:, 6] = dfd.iloc[:, 6].round(3)      timestamp column
-    dfd.iloc[:, 7] = dfd.iloc[:, 7].round(3)
+    dfd.iloc[:, 6] = dfd.iloc[:, 6].round(3)
+    #dfd.iloc[:, 7] = dfd.iloc[:, 7].round(3)
     dfd.iloc[:, 8] = dfd.iloc[:, 8].round(3)
     dfd.iloc[:, 9] = dfd.iloc[:, 9].round(3)
     dfd.iloc[:, 10] = dfd.iloc[:, 10].round(3)
@@ -106,7 +106,7 @@ df_master = QualityZone.download_master(master_path)
 df_new = QualityZone.download_new_data(new_path, newcols)
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
-working_file_path = '/Boulder Creek CZO Team Folder/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv'
+working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
 QualityZone.df_to_dropbox(df_updated, working_file_path)
 
 pecos.logger.initialize()
@@ -115,7 +115,7 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-6999, 'NAN'])
+pm.check_corrupt([-7999, 'NAN'])
 pm.check_range([12, 15.1], 'GGL_NF_Met_Battery Voltage Average')
 
 mask = pm.get_test_results_mask()

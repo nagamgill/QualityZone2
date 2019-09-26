@@ -4,6 +4,7 @@ import pandas as pd
 import dropbox
 import config
 
+
 dbx = dropbox.Dropbox(config.dropbox_api)
 dbx.users_get_current_account()
 
@@ -19,7 +20,8 @@ def download_master(master_path):
     df_master.index = pd.to_datetime(df_master.index)
     return df_master
 
-def download_new_data(new_path, newcols):
+def download_new_data(new_path, newcols, start_date=None):
+    # start date removes data before the selected date, e.x. the water year of interest
     print("downloading new data .dat from dropbox...")
     _, res = dbx.files_download(new_path)
     df_new=pd.read_csv(res.raw,
@@ -31,6 +33,8 @@ def download_new_data(new_path, newcols):
     print("translating datalogger headers...")
     df_new.rename(columns=newcols, inplace=True)
     df_new.index = pd.to_datetime(df_new.index)
+    if start_date is not None:
+        df_new = df_new.truncate(before=pd.Timestamp(start_date))
     return df_new
 
 # this function requres the new dataframe index to begin sometime after the old dataframe index
@@ -54,6 +58,7 @@ def append_non_duplicates(a, b, col=None):
 
 # this will overwrite the previously existing file
 def df_to_dropbox(dataframe, upload_path):
+    print('Uploading dataframe to %s' % upload_path)
     df_string = dataframe.to_csv(index_label='TIMESTAMP') #na_rep='NaN')
     db_bytes = bytes(df_string, 'utf8')
     dbx.files_upload(
@@ -93,7 +98,7 @@ def dbx_csv_folder_download(dbx_folder, outpath):
         if isinstance(entry, dropbox.files.FileMetadata) and entry.path_lower.endswith('.csv'):
             md, res = dbx.files_download(entry.path_lower)
             # 'wb' or "write binary" may cause Mac / PC compatibility issues - needs testing
-            with open (os.path.join(outpath + entry.name), 'wb') as out:
+            with open (os.path.join(outpath + '/' + entry.name), 'wb') as out:
                 out.write(res.content)
                 print("Saving %s to outpath" % (entry.name))
 
@@ -110,7 +115,8 @@ def dbx_dat_folder_download(dbx_folder, outpath):
                 print("Saving %s to outpath" % (entry.name))
 
 
-def concat_dat(dat_path):
+def concat_dat(dat_path, start_date=None):
+    print('Concatenating .dat files in folder with index_sort and drop_duplicates')
     df = pd.concat([pd.read_csv(
         f,
         header=1,
@@ -121,4 +127,7 @@ def concat_dat(dat_path):
     df.drop_duplicates(inplace=True)
     df.index = pd.to_datetime(df.index)
     df = df.sort_index(ascending=True)
+    if start_date is not None:
+        df = df.truncate(before=pd.Timestamp(start_date))
+        # timestamp format is YYYY-MM-DD
     return df
