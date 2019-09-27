@@ -34,6 +34,33 @@ distribute_path = os.path.join(dropbox_base + distribute_file)
 local_raw = tempfile.mkdtemp()
 
 
+
+newcols = {
+    'RECORD': 'Record_Number',
+    'BattV_Min': 'Battv_min',
+    'WS_ms_Min': 'Wind_Speed_Min_MS',
+    'WS_ms_Max':'Wind_Speed_Max_MS',
+    'WS_ms_Avg':'Wind_Speed_Avg_MS',
+    'WindDir':'Wind_Direction',
+    'Rain_mm_Tot':'Rain_mm_total',
+    'NR_Wm2_Avg':'NR_Wm2_Avg',
+    'CNR_Wm2_Avg':'CNR_Wm2_Avg',
+    'AirTC_Avg':'AirT_C_Avg',
+    'AirTC_Max':'Air_T_C_Max',
+    'AirTC_Min':'Air_T_C_Min',
+    'RH_Min':'RH_Min',
+    'RH_Max':'RH_Max',
+    'RH':'RH',
+    'DT_Avg':'Distance (m)',
+    'TCDT_Avg':'Temperature Compensated Distance (m)',
+    'Eb':'Eb',
+    'Temp':'Soil_Temp',
+    'EC':'EC',
+    'VWC':'VWC'
+
+}
+
+
 def format_for_dist(dataframe):
     dfd = dataframe.copy()
     dfd = dfd.drop([
@@ -96,7 +123,8 @@ def format_for_dist(dataframe):
 
 df_master = QualityZone.download_master(master_path)
 QualityZone.dbx_dat_folder_download(raw_folder, local_raw)
-df_new = QualityZone.concat_dat(local_raw, start_date='2018-10-01')
+df_new = QualityZone.concat_dat(local_raw, start_date='2018-11-02')
+df_new = df_new.rename(columns=newcols)
 
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
