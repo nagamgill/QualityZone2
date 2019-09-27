@@ -173,3 +173,7 @@ QualityZone.qc_results_to_dropbox(dirpath)
 url = os.path.join(dirpath + '/' + system_name + '.html')
 webbrowser.open('file://' + url, new=2)
 
+
+
+
+
