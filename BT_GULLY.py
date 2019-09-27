@@ -85,7 +85,6 @@ def format_for_dist(dataframe):
 
         ], axis=1)
 
-    dfd = dfd.fillna('')
     dist_columns = {
         'Volumetric Water Content 1':"VOL WATER CONTENT-15CM",
         'Volumetric Water Content 2':"VOL WATER CONTENT-40CM",
@@ -100,6 +99,7 @@ def format_for_dist(dataframe):
     }
 
     dfd.rename(columns=dist_columns, inplace=True)
+
     dfd.iloc[:, 0] = dfd.iloc[:, 0].round(3)
     dfd.iloc[:, 1] = dfd.iloc[:, 1].round(3)
     dfd.iloc[:, 2] = dfd.iloc[:, 2].round(3)
@@ -110,7 +110,9 @@ def format_for_dist(dataframe):
     dfd.iloc[:, 7] = dfd.iloc[:, 7].round(3)
     dfd.iloc[:, 8] = dfd.iloc[:, 8].round(3)
 
+    dfd = dfd.fillna('')
     return dfd
+
 
 df_master = QualityZone.download_master(master_path)
 df_new = QualityZone.download_new_data(new_path, newcols)
@@ -125,8 +127,9 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-6999, 'NAN'])
+pm.check_corrupt([-7999, 'NAN'])
 pm.check_range([12, 15.1], 'Battery Voltage, DC Volts')
+pm.check_increment([None,200], 'Water Potential 1 (kPa)')
 
 mask = pm.get_test_results_mask()
 QCI = pecos.metrics.qci(mask, pm.tfilter)
@@ -253,7 +256,30 @@ trace12 = go.Scattergl(
     name='WP 110cm (mV)',
 )
 
-fig2 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+
+trace20 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Water Potential 1 (kPa)'],
+    mode='lines',
+    name='WP (kPa) 15cm'
+)
+trace21 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Water Potential 2 (kPa)'],
+    mode='lines',
+    name='WP (kPa) 40cm'
+)
+trace22 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Water Potential 3 (kpa)'],
+    mode='lines',
+    name='WP (kPa) 70cm'
+)
+
+
+
+
+fig2 = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
 fig2.append_trace(trace7, 1, 1)
@@ -262,6 +288,9 @@ fig2.append_trace(trace9, 1, 1)
 fig2.append_trace(trace10, 2, 1)
 fig2.append_trace(trace11, 2, 1)
 fig2.append_trace(trace12, 2, 1)
+fig2.append_trace(trace20, 3, 1)
+fig2.append_trace(trace21, 3, 1)
+fig2.append_trace(trace22, 3, 1)
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
 

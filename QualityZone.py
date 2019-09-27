@@ -54,7 +54,7 @@ def append_non_duplicates(a, b, col=None):
         bind = b.index.values
     take_rows = list(set(bind)-set(aind))
     take_rows = [i in take_rows for i in bind]
-    return(a.append( b.iloc[take_rows,:], sort=True))
+    return(a.append( b.iloc[take_rows,:]))
 
 # this will overwrite the previously existing file
 def df_to_dropbox(dataframe, upload_path):
@@ -123,7 +123,7 @@ def concat_dat(dat_path, start_date=None):
         skiprows=[2,3],
         index_col=0,
         na_values='NAN')
-        for f in glob.glob(os.path.join(dat_path + '/*.dat'))], sort=True)
+        for f in glob.glob(os.path.join(dat_path + '/*.dat'))], sort=False)
     df.drop_duplicates(inplace=True)
     df.index = pd.to_datetime(df.index)
     df = df.sort_index(ascending=True)

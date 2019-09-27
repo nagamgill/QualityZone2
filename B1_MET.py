@@ -64,7 +64,7 @@ newcols = {
 def format_for_dist(dataframe):
     dfd = dataframe.copy()
     dfd = dfd.drop([
-        'ArrayID_TenMinute',
+        '',
         'Batt_Volt_Min',
         'PTemp_C',
         'RECORD',
@@ -124,12 +124,34 @@ def format_for_dist(dataframe):
 df_master = QualityZone.download_master(master_path)
 QualityZone.dbx_dat_folder_download(raw_folder, local_raw)
 df_new = QualityZone.concat_dat(local_raw, start_date='2018-11-02')
-df_new = df_new.rename(columns=newcols)
+df_new.rename(columns=newcols, inplace=True)
+'''df_new.columns = ['Record_Number',
+                  'Battv_min',
+                  'Wind_Speed_Min_MS',
+                  'Wind_Speed_Max_MS',
+                  'Wind_Speed_Avg_MS',
+                  'Wind_Direction',
+                  'Rain_mm_total',
+                  'NR_Wm2_Avg',
+                  'CNR_Wm2_Avg',
+                  'AirT_C_Avg',
+                  'Air_T_C_Max',
+                  'Air_T_C_Min',
+                  'RH_Min',
+                  'RH_Max',
+                  'RH',
+                  'Distance (m)',
+                  'Temperature Compensated Distance (m)',
+                  'Eb',
+                  'Soil_Temp',
+                  'EC',
+                  'VWC'
+                  ]'''
 
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
 # working file access
-working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
+working_file_path = os.path.join(dropbox_base + 'Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
 QualityZone.df_to_dropbox(df_updated, working_file_path)
 
 pecos.logger.initialize()
@@ -174,6 +196,189 @@ url = os.path.join(dirpath + '/' + system_name + '.html')
 webbrowser.open('file://' + url, new=2)
 
 
+plotly_df = df_updated.copy()
 
+trace1 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Temperature Compensated Distance (m)'],
+    mode = 'markers',
+    marker = dict(
+        size = 2,
+    ),
+    name='T compensated distance'
+)
+trace2 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Battv_min'],
+    mode='lines',
+    name='Battv min',
+)
+
+fig = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig.append_trace(trace1, 1, 1)
+fig.append_trace(trace2, 2, 1)
+
+plot_url = py.plot(fig, filename='B1_Met_Depth_Battv')
+
+
+trace3 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Rain_mm_total'],
+    mode='lines',
+    name='Precipitation'
+)
+trace4 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Eb'],
+    mode='lines',
+    name='Soil Eb',
+)
+trace5 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['EC'],
+    mode='lines',
+    name='Soil EC',
+)
+trace6 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Soil_Temp'],
+    mode='lines',
+    name='Soil T',
+)
+trace7 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['VWC'],
+    mode='lines',
+    name='Soil VWC',
+)
+
+fig2 = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig2.append_trace(trace3, 2, 1)
+fig2.append_trace(trace4, 1, 1)
+fig2.append_trace(trace5, 3, 1)
+fig2.append_trace(trace6, 1, 1)
+fig2.append_trace(trace7, 3, 1)
+
+
+#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
+
+plot_url = py.plot(fig2, filename='B1_Met_Soil')
+
+
+
+trace8 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Wind_Direction'],
+    mode='lines',
+    name='Wind Direction'
+)
+trace9 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Wind_Speed_Avg_MS'],
+    mode='lines',
+    name='Wind Speed Average',
+)
+trace10 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Wind_Speed_Max_MS'],
+    mode='lines',
+    name='Wind Speed Max',
+)
+trace11 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Wind_Speed_Min_MS'],
+    mode='lines',
+    name='Wind Speed Min',
+)
+
+
+fig3 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig3.append_trace(trace8, 2, 1)
+fig3.append_trace(trace9, 1, 1)
+fig3.append_trace(trace10, 1, 1)
+fig3.append_trace(trace11, 1, 1)
+
+
+#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
+
+plot_url = py.plot(fig3, filename='B1_Met_Wind')
+
+
+
+trace12 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['NR_Wm2_Avg'],
+    mode='lines',
+    name='Net Radiation AVG'
+)
+trace13 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['CNR_Wm2_Avg'],
+    mode='lines',
+    name='Corrected Net Radiation AVG',
+)
+trace14 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Air_T_C_Min'],
+    mode='lines',
+    name='Air T Min',
+)
+trace15 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['Air_T_C_Max'],
+    mode='lines',
+    name='Air T Max',
+)
+trace16 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['AirT_C_Avg'],
+    mode='lines',
+    name='Air T AVG',
+)
+trace17 = go.Scattergl(
+    x=plotly_df.index,
+    y=plotly_df['RH'],
+    mode='lines',
+    name='RH %',
+)
+
+fig4 = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+                          shared_xaxes=True,
+                          vertical_spacing=0.001)
+fig4.append_trace(trace1, 1, 1)
+fig4.append_trace(trace2, 1, 1)
+fig4.append_trace(trace3, 2, 1)
+fig4.append_trace(trace4, 2, 1)
+fig4.append_trace(trace5, 2, 1)
+fig4.append_trace(trace6, 3, 1)
+
+
+
+plot_url = py.plot(fig4, filename='B1_Met_AirT_Radiaiton')
+
+
+
+
+
+
+if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
+    df_updated = QualityZone.download_master(working_file_path)
+    #print(updated_frame.dtypes)
+    print('dataframe replaced with updated data from Quality_Zone_working_data.csv')
+
+if click.confirm('Save updated dataset as master .csv?', default=False):
+    QualityZone.df_to_dropbox(df_updated, master_path)
+    print("Master .csv uploaded to dropbox")
+
+if click.confirm('Save updated dataset to distribute .csv?', default=False):
+    dist_df = format_for_dist(df_updated)
+    QualityZone.df_to_dropbox(dist_df, distribute_path)
+    print("distribute .csv formatted for distribution and uploaded to dropbox")
 
 
