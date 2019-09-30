@@ -18,7 +18,7 @@ print("Starting QualityZone")
 print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
 
-system_name = 'GGL_BT_GULLY'
+system_name = 'BT_GULLY'
 dropbox_base = '/CZO/BcCZO'
 master_file = '/Data/Betasso/Betasso_Soil/BT_Gully/BT_Gully_ExcelandMeta/BT_Gully_CR1000X_Master_WY2019.csv'
 new_file = '/Toughbook_Share/Betasso/Betasso_Soil/BT_Gully/data/BT_Gully_CR1000X_BT_Gully_10min_2018_08_14_10_15_49.dat'
@@ -99,6 +99,16 @@ def format_for_dist(dataframe):
     }
 
     dfd.rename(columns=dist_columns, inplace=True)
+    dfd = dfd[["VOL WATER CONTENT-15CM",
+               "VOL WATER CONTENT-40CM",
+               "VOL WATER CONTENT-70CM",
+               "WATER POTENTIAL-15CM(mV)",
+               "WATER POTENTIAL-15CM(kPa)",
+               "WATER POTENTIAL-40CM(mV)",
+               "WATER POTENTIAL-40CM(kPa)",
+               "WATER POTENTIAL-70CM(mV)",
+               "WATER POTENTIAL-70CM(kPa)"
+               ]]
 
     dfd.iloc[:, 0] = dfd.iloc[:, 0].round(3)
     dfd.iloc[:, 1] = dfd.iloc[:, 1].round(3)
