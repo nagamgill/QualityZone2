@@ -102,7 +102,7 @@ def format_for_dist(dataframe):
 
     }
     dfd.rename(columns=dist_columns, inplace=True)
-    '''dfd.iloc[:, 0] = dfd.iloc[:, 0].round(3)
+    dfd.iloc[:, 0] = dfd.iloc[:, 0].round(3)
     dfd.iloc[:, 1] = dfd.iloc[:, 1].round(3)
     dfd.iloc[:, 2] = dfd.iloc[:, 2].round(3)
     dfd.iloc[:, 3] = dfd.iloc[:, 3].round(3)
@@ -121,7 +121,7 @@ def format_for_dist(dataframe):
     dfd.iloc[:, 16] = dfd.iloc[:, 16].round(3)
     #dfd.iloc[:, 17] = dfd.iloc[:, 17].round(3)
     dfd.iloc[:, 18] = dfd.iloc[:, 18].round(3)
-    dfd.iloc[:, 19] = dfd.iloc[:, 19].round(3)'''
+    dfd.iloc[:, 19] = dfd.iloc[:, 19].round(3)
 
 
     return dfd
