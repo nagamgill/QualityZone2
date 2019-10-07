@@ -503,10 +503,6 @@ data = [trace23]
 
 plot_url = py.plot(data, filename='BetMet_Met_BattV')
 
-data2 = [trace9, trace13]
-
-plot_url = py.plot()
-
 
 
 

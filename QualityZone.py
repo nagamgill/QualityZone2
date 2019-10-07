@@ -34,6 +34,7 @@ def download_new_data(new_path, newcols, start_date=None):
     df_new.rename(columns=newcols, inplace=True)
     df_new.index = pd.to_datetime(df_new.index)
     if start_date is not None:
+        df_new.sort_index(inplace=True)
         df_new = df_new.truncate(before=pd.Timestamp(start_date))
     return df_new
 
