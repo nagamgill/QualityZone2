@@ -20,9 +20,9 @@ print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'GGL_NF_SP3'
 dropbox_base = '/CZO/BcCZO'
-master_file = '/Data/GordonGulch/GGL/GGL_NF_SP3/GGL_NF_SP3__CR10x_Excelandmeta/GGL_NF_SP3_CR10x_Master_WY2019.csv'
+master_file = '/Data/GordonGulch/GGL/GGL_NF_SP3/GGL_NF_SP3__CR10x_Excelandmeta/GGL_NF_SP3_CR10x_Master_WY2020.csv'
 new_file = '/Toughbook_Share/GordonGulch/GGL/Data/GGL_NF_SP3_Raw/GGL_NF_SP3_CR10xPB_15.dat'
-distribute_file = '/Data/GordonGulch/GGL/GGL_NF_SP3/GGL_NF_SP3__CR10x_Excelandmeta/GGL_NF_SP3_CR10x_Distribute_WY2019.csv'
+distribute_file = '/Data/GordonGulch/GGL/GGL_NF_SP3/GGL_NF_SP3__CR10x_Excelandmeta/GGL_NF_SP3_CR10x_Distribute_WY2020.csv'
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
@@ -124,7 +124,7 @@ def format_for_dist(dataframe):
     return dfd
 
 df_master = QualityZone.download_master(master_path)
-df_new = QualityZone.download_new_data(new_path, newcols)
+df_new = QualityZone.download_new_data(new_path, newcols, start_date='2019-10-01')
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
 working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
@@ -136,8 +136,10 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-6999, 'NAN'])
+pm.check_corrupt([-7999, 'NAN'])
 pm.check_range([12, 15.1], 'Battery Voltage, DC Volts')
+pm.check_outlier([None, 3])
+
 
 mask = pm.get_test_results_mask()
 QCI = pecos.metrics.qci(mask, pm.tfilter)

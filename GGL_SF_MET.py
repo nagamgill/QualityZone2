@@ -20,9 +20,9 @@ print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'GGL_SF_MET'
 dropbox_base = '/CZO/BcCZO'
-master_file = '/Data/GordonGulch/GGL/GGL_SF_Met/GGL_SF_Met_ExcelandMeta/GGL_SF_Met_Master_WY2019.csv'
+master_file = '/Data/GordonGulch/GGL/GGL_SF_Met/GGL_SF_Met_ExcelandMeta/GGL_SF_Met_Master_WY2020.csv'
 new_file = '/Toughbook_Share/GordonGulch/GGL/Data/GGL_SF_Met_Raw/GGL_SF_Met_CR1000_ten_min.dat'
-distribute_file = '/Data/GordonGulch/GGL/GGL_SF_Met/GGL_SF_Met_ExcelandMeta/GGL_SF_Met_Distribute_WY2019.csv'
+distribute_file = '/Data/GordonGulch/GGL/GGL_SF_Met/GGL_SF_Met_ExcelandMeta/GGL_SF_Met_Distribute_WY2020.csv'
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
@@ -127,7 +127,7 @@ def format_for_dist(dataframe):
     return dfd
 
 df_master = QualityZone.download_master(master_path)
-df_new = QualityZone.download_new_data(new_path, newcols)
+df_new = QualityZone.download_new_data(new_path, newcols, start_date='2019-10-01')
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
 working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
