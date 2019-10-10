@@ -19,7 +19,7 @@ print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'GGL_NF_SP4'
-dropbox_base = '/Boulder Creek CZO Team Folder/BcCZO'
+dropbox_base = '/CZO/BcCZO'
 master_file = '/Data/GordonGulch/GGL/GGL_NF_SP4/GGL_NF_SP4_CR1000_ExcelandMeta/GGL_NF_SP4_CR1000_Master_WY2019.csv'
 new_file = '/Toughbook_Share/GordonGulch/GGL/Data/GGL_NF_SP4_Raw/GGL_NF_SP4_GGL_NF_SP4_10min.dat'
 distribute_file = '/Data/GordonGulch/GGL/GGL_NF_SP4/GGL_NF_SP4_CR1000_ExcelandMeta/GGL_NF_SP4_CR1000_Distribute_WY2019.csv'
@@ -113,7 +113,7 @@ df_master = QualityZone.download_master(master_path)
 df_new = QualityZone.download_new_data(new_path, newcols)
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
-working_file_path = '/Boulder Creek CZO Team Folder/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv'
+working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
 QualityZone.df_to_dropbox(df_updated, working_file_path)
 
 pecos.logger.initialize()
