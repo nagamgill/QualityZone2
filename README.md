@@ -10,7 +10,5 @@ Data handling via Pandas
 
 QC via Pecos and Plotly
 
-*Dillon Ragar* |
-*Field Manager* |
-*Boulder Creek CZO*
+*Dillon Ragar* 
 
