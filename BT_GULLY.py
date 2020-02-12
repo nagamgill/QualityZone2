@@ -20,9 +20,9 @@ print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'BT_GULLY'
 dropbox_base = '/CZO/BcCZO'
-master_file = '/Data/Betasso/Betasso_Soil/BT_Gully/BT_Gully_ExcelandMeta/BT_Gully_CR1000X_Master_WY2019.csv'
+master_file = '/Data/Betasso/Betasso_Soil/BT_Gully/BT_Gully_ExcelandMeta/BT_Gully_CR1000X_Master_WY2020.csv'
 new_file = '/Toughbook_Share/Betasso/Betasso_Soil/BT_Gully/data/BT_Gully_CR1000X_BT_Gully_10min_2018_08_14_10_15_49.dat'
-distribute_file = '/Data/Betasso/Betasso_Soil/BT_Gully/BT_Gully_ExcelandMeta/BT_Gully_CR1000X_Distribute_WY2019.csv'
+distribute_file = '/Data/Betasso/Betasso_Soil/BT_Gully/BT_Gully_ExcelandMeta/BT_Gully_CR1000X_Distribute_WY2020.csv'
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
@@ -125,7 +125,7 @@ def format_for_dist(dataframe):
 
 
 df_master = QualityZone.download_master(master_path)
-df_new = QualityZone.download_new_data(new_path, newcols)
+df_new = QualityZone.download_new_data(new_path, newcols, start_date='2019-10-01')
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
 working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
@@ -178,31 +178,41 @@ plotly_df = df_updated.copy()
 trace1 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['BTSD_1, Distance, cm'],
-    mode='markers',
+    mode = 'markers',
+    marker = dict(
+        size = 2),
     name='SD_1'
 )
 trace2 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['BTSD_2, Distance, cm'],
-    mode='markers',
+    mode = 'markers',
+    marker = dict(
+        size = 2),
     name='SD_2',
 )
 trace3 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['BTSD_3, Distance, cm'],
-    mode='markers',
+    mode = 'markers',
+    marker = dict(
+        size = 2),
     name='SD_3',
 )
 trace4 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['BTSD_4, Distance, cm'],
-    mode='markers',
+    mode = 'markers',
+    marker = dict(
+        size = 2),
     name='SD_4',
 )
 trace5 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['BTSD_5, Distance, cm'],
-    mode='markers',
+    mode = 'markers',
+    marker = dict(
+        size = 2),
     name='SD_5',
 )
 trace6 = go.Scattergl(
@@ -212,19 +222,13 @@ trace6 = go.Scattergl(
     name='Batt v',
 )
 
-fig = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
-                          shared_xaxes=True,
-                          vertical_spacing=0.001)
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 1, 1)
-fig.append_trace(trace3, 1, 1)
-fig.append_trace(trace4, 1, 1)
-fig.append_trace(trace5, 1, 1)
-fig.append_trace(trace6, 2, 1)
+
+data = [trace1, trace2, trace3, trace4, trace5]
+
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
 
-plot_url = py.plot(fig, filename='BT_Gully_Depth_Battv')
+plot_url = py.plot(data, filename='BT_Gully_Depth_Battv')
 #plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\Betasso_Soil\\BT_Gully\\BT_Gully_Plots_WY2019\\1.html')
 
 #---------------------------------------------------------------------------------------------------
@@ -306,6 +310,17 @@ fig2.append_trace(trace22, 3, 1)
 
 plot_url = py.plot(fig2, filename='BT_Gully_Soil')
 #plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\Betasso_Soil\\BT_Gully\\BT_Gully_WY2019\\BT_Gully_Plots_WY2019\\2.html')
+
+data = [trace6]
+layout = go.Layout(
+    title="BT_Gully_Battery"
+)
+battv = go.Figure(data=data, layout=layout)
+
+plot_url = py.iplot(battv, filename='BT_Gully_Battery', auto_open=True)
+
+
+
 
 # open Pecos results
 url = "D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Personnel_Folders\\Dillon_Ragar\\QualityZone\\Results\\BT_GULLY.html"
