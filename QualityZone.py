@@ -10,11 +10,11 @@ dbx.users_get_current_account()
 
 
 def download_master(master_path):
-    '''
+    """
     Download master CSV file from dbx. Assumes index is col 0.
     pd.na_values defines ADDITIONAL na strings, not only na strings.
     :param master_path: path to master file in dbx
-    '''
+    """
     print("downloading master CSV file from dropbox...")
     _, res = dbx.files_download(master_path)
     df_master = pd.read_csv(res.raw,
@@ -25,13 +25,13 @@ def download_master(master_path):
 
 
 def download_new_data(new_path, newcols, start_date=None):
-    '''
+    """
     Download Campbell Scientific .dat file from dbx. Pandas read_csv params for CR-1000 TOA15 .dat file
 
     :param new_path: dbx path
     :param newcols: dictionary to rename headers from CR-1000 program to more human-readable.
     :param start_date: truncates data before this date, to properly append to Water Year of interest. Format: YYYY-MM-DD
-    '''
+    """
     print("downloading new data .dat from dropbox...")
     _, res = dbx.files_download(new_path)
     df_new = pd.read_csv(res.raw,
@@ -50,7 +50,7 @@ def download_new_data(new_path, newcols, start_date=None):
 
 
 def append_non_duplicates(a, b, col=None):
-    '''
+    """
     Subtract index values from two DFs to append new data from data-logger.
     This func requires the new DF index to begin sometime after the old DF index.
 
@@ -58,7 +58,7 @@ def append_non_duplicates(a, b, col=None):
     :param b: new data to append.
     :param column: column to determine new data (default is df.index)
 
-    '''
+    """
     print("Appending new data onto master dataframe...")
     if ((a is not None and type(a) is not pd.core.frame.DataFrame) or (
             b is not None and type(b) is not pd.core.frame.DataFrame)):
@@ -79,12 +79,12 @@ def append_non_duplicates(a, b, col=None):
 
 
 def df_to_dropbox(dataframe, upload_path):
-    '''
+    """
     Upload DF to dbx as .CSV with UTF-8 encoding. This will overwrite the previously existing file.
 
     :param dataframe: df
     :param upload_path: dbx path to save file
-    '''
+    """
     print('Uploading dataframe to %s' % upload_path)
     df_string = dataframe.to_csv(index_label='TIMESTAMP')  # na_rep='NaN')
     db_bytes = bytes(df_string, 'utf8')
@@ -96,11 +96,11 @@ def df_to_dropbox(dataframe, upload_path):
 
 
 def qc_results_to_dropbox(qc_dir):
-    '''
+    """
     Upload Pecos QC results folder to dbx.
 
     :param qc_dir: dbx directory for test results.
-    '''
+    """
     print("Attempting to upload...")
     # walk return first the current folder that it walk, then tuples of dirs and files not "subdir, dirs, files"
     for dir, dirs, files in os.walk(qc_dir):
@@ -123,13 +123,13 @@ def qc_results_to_dropbox(qc_dir):
 
 
 def dbx_csv_folder_download(dbx_folder, outpath):
-    '''
+    """
     download all .csv files from a dbx folder. This function is improved and expanded in ArchivalZone.dbx_pathlist_to_df.
 
     :param dbx_folder: location to pull CSV files from
     :param outpath: dbx location to save CSV files. In QZ2 this is temp folder.
 
-    '''
+    """
     entries = dbx.files_list_folder(dbx_folder).entries
     print("Downloading .csv files from dbx_folder")
     for entry in entries:
@@ -142,9 +142,9 @@ def dbx_csv_folder_download(dbx_folder, outpath):
 
 
 def dbx_dat_folder_download(dbx_folder, outpath):
-    '''
+    """
     Download .dat files from a specified dbx filder.
-    '''
+    """
     entries = dbx.files_list_folder(dbx_folder).entries
     print("Downloading .dat files from %s" % dbx_folder)
     for entry in entries:
@@ -157,13 +157,13 @@ def dbx_dat_folder_download(dbx_folder, outpath):
 
 
 def concat_dat(dat_path, start_date=None):
-    '''
+    """
     Concat the saved dat files in folder with pd.index_sort and pd.drop_duplicates.
     This func is also improved in ArchivalZone.dbx_pathlist_to_df, but still in use in QualityZone2
 
     :param data_path: dbx path to .dat files.
     :param start_date: truncate data before this data. Format is YYYY-MM-DD
-    '''
+    """
     print('Concatenating .dat files in folder with index_sort and drop_duplicates')
     df = pd.concat([pd.read_csv(
         f,
@@ -182,9 +182,9 @@ def concat_dat(dat_path, start_date=None):
 
 
 def drop_dup(df):
-    '''
+    """
     Alternative to Pandas drop_duplicates command, which ignores df index. This func only checks the index.
     Especially useful for data with slowly changing values, such as groundwell pressure and temp.
-    '''
+    """
     df = df.loc[~df.index.duplicated(keep='first')]
     return df
