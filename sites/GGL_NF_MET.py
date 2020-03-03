@@ -13,7 +13,6 @@ import click
 import shutil
 
 
-
 print("Starting QualityZone")
 print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
