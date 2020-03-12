@@ -56,7 +56,7 @@ def append_non_duplicates(a, b, col=None):
 
     :param a: master or existing data.
     :param b: new data to append.
-    :param column: column to determine new data (default is df.index)
+    :param col: column to determine new data (default is df.index)
 
     """
     print("Appending new data onto master dataframe...")
@@ -86,7 +86,7 @@ def df_to_dropbox(dataframe, upload_path):
     :param upload_path: dbx path to save file
     """
     print('Uploading dataframe to %s' % upload_path)
-    df_string = dataframe.to_csv(index_label='TIMESTAMP')  # na_rep='NaN')
+    df_string = dataframe.to_csv(index_label='TIMESTAMP')
     db_bytes = bytes(df_string, 'utf8')
     dbx.files_upload(
         f=db_bytes,
@@ -161,7 +161,7 @@ def concat_dat(dat_path, start_date=None):
     Concat the saved dat files in folder with pd.index_sort and pd.drop_duplicates.
     This func is also improved in ArchivalZone.dbx_pathlist_to_df, but still in use in QualityZone2
 
-    :param data_path: dbx path to .dat files.
+    :param dat_path: dbx path to .dat files.
     :param start_date: truncate data before this data. Format is YYYY-MM-DD
     """
     print('Concatenating .dat files in folder with index_sort and drop_duplicates')

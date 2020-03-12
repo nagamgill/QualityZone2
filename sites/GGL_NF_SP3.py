@@ -26,8 +26,7 @@ distribute_file = '/Data/GordonGulch/GGL/GGL_NF_SP3/GGL_NF_SP3__CR10x_Excelandme
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
-# not sure if this is neccesary with the .CSV system, needs testing
-master_index = ''
+
 
 newcols = {
     'RECORD': 'Record Number',
