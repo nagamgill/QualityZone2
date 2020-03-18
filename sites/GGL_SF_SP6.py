@@ -5,12 +5,15 @@ import tempfile
 import pecos
 import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
+#import plotly.plotly as py
 import plotly.graph_objs as go
 from plotly import tools
+import plotly.io
 import webbrowser
 import click
 import shutil
+from chart_studio.plotly import plot, iplot
+from plotly.subplots import make_subplots
 
 
 print("Starting QualityZone")
@@ -43,17 +46,17 @@ newcols = {
 def format_for_dist(dataframe):
     df = dataframe.copy()
     df = df.drop(['Record Number',
-                           'Battery Voltage, DC Volts',
-                           'Soil Moisture, CS616 period average, 5 cm, u sec',
-                           'Soil Moisture, CS616 period average, 25 cm, u sec'
-                           ], axis=1)
+                'Battery Voltage, DC Volts',
+                'Soil Moisture, CS616 period average, 5 cm, u sec',
+                'Soil Moisture, CS616 period average, 25 cm, u sec'
+                ], axis=1)
 
     dist_columns = {
         'Soill Moisture, Volumetric Water Content, 5 cm, fraction':'Vol Water Content-5cm',
         'Soil Temperature, 5 cm, degree C':'TEMP(C)-5cm',
         'Soill Moisture, Volumetric Water Content, 25 cm, fraction':'Vol Water Content-25cm',
         'Soil Temperature, 25 cm, degree C':'TEMP(C)-25cm'
-    }
+        }
     df.rename(columns=dist_columns, inplace=True)
     df['Vol Water Content-5cm'] = df['Vol Water Content-5cm'].round(3)
     df['TEMP(C)-5cm'] = df['TEMP(C)-5cm'].round(2)
@@ -141,23 +144,37 @@ trace4 = go.Scatter(
 )
 
 
-fig = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
-                          shared_xaxes=True,
-                          vertical_spacing=0.001)
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 1, 1)
-fig.append_trace(trace3, 2, 1)
-fig.append_trace(trace4, 2, 1)
+fig = make_subplots(
+        rows=4,
+        cols=1,
+        shared_xaxes=True,
+        specs=[[{}], [{}], [{}], [{}]],
+        vertical_spacing=0.005)
 
-# axis titles
-fig['layout']['yaxis1'].update(title='VWC Fraction')
-fig['layout']['yaxis2'].update(title='Degree C')
-# Plot Title
-fig['layout'].update(title='GGL_SF_SP6_Soil')
+fig.add_trace(trace1, row=1, col=1)
+fig.add_trace(trace2, row=2, col=1)
+fig.add_trace(trace3, row=3, col=1)
+fig.add_trace(trace4, row=4, col=1)
+
+fig.layout.title.text = "GGL_SF_SP6_Soil"
+
+try:
+    plotly.io.write_html(
+        fig,
+        file='/Users/dillon/Dropbox (Boulder Creek CZO)/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP6/GGL_SF_SP6_PythonScripts/Soil.html',
+        auto_open=True
+            )
+except:
+    plotly.io.write_html(
+        fig,
+        file='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_SP6\\GGL_SF_SP6_PythonScripts\\Soil.html',
+        auto_open=True
+        )
 
 
-plot_url = py.plot(fig, filename='QualityZone/GGL_SF_SP6/GGL_SF_SP6_soil')
-#plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_SP6\\GGL_SF_SP6_PythonScripts\\Soil.html')
+
+
+
 
 
 trace5 = go.Scatter(
@@ -174,22 +191,34 @@ trace6 = go.Scatter(
 )
 
 
-fig2 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
-                          shared_xaxes=True,
-                          vertical_spacing=0.001)
-fig2.append_trace(trace5, 1, 1)
-fig2.append_trace(trace6, 2, 1)
+fig2 = make_subplots(
+    rows=2,
+    cols=1,
+    specs=[[{}], [{}]],
+    shared_xaxes=True,
+    vertical_spacing=0.005
+)
+
+fig2.add_trace(trace5, row=1, col=1)
+fig2.add_trace(trace6, row=2, col=1)
+fig2.layout.title.text="GGL_SF_SP6_Battery"
 
 
-# axis titles
-fig2['layout']['yaxis1'].update(title='Deg C')
-fig2['layout']['yaxis2'].update(title='Volts')
-# Plot Title
-fig2['layout'].update(title='GGL_SF_SP6_Battery')
 
+try:
+    plotly.io.write_html(
+        fig2,
+        file='/Users/dillon/Dropbox (Boulder Creek CZO)/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP6/GGL_SF_SP6_PythonScripts/Battery.html',
+        auto_open=True
+            )
+except:
+    plotly.io.write_html(
+        fig2,
+        file='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_SP6\\GGL_SF_SP6_PythonScripts\\Battery.html',
+        auto_open=True
+        )
 
-plot_url = py.plot(fig2, filename='QualityZone/GGL_SF_SP6/GGL_SF_SP6_Battery')
-#plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_SP6\\GGL_SF_SP6_PythonScripts\\Battery.html')
+#plot_url = py.plot(fig2, filename='QualityZone/GGL_SF_SP6/GGL_SF_SP6_Battery')
 
 url = "/dirpath/GGL_SF_SP6.html"
 webbrowser.open(url, new=2)
