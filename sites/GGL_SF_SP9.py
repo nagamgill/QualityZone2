@@ -1,17 +1,14 @@
-import QualityZone
+from sites import QualityZone, config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly import tools
+import plotly.io
 import webbrowser
 import click
-import pandas as pd
-import numpy as np
+from plotly.subplots import make_subplots
+
 
 
 
@@ -96,7 +93,7 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-7999, 'NAN'])
+pm.check_corrupt([-7999, -6999, 'NAN'])
 pm.check_corrupt(['NaN', 'Na', 'na', 'np.nan', 'nan'])
 pm.check_corrupt(corrupt_values=['nan','NAN', '"NAN"'])
 pm.check_range([12, 15.1], 'Bat Volt (minimum)')
@@ -197,43 +194,49 @@ trace14 = go.Scatter(
     name='Battery Voltage'
 )
 
-fig2 = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
-                          shared_xaxes=True,
-                          vertical_spacing=0.001)
-fig2.append_trace(trace5, 1, 1)
-fig2.append_trace(trace6, 3, 1)
-fig2.append_trace(trace7, 2, 1)
-fig2.append_trace(trace8, 1, 1)
-fig2.append_trace(trace9, 3, 1)
-fig2.append_trace(trace10, 1, 1)
-fig2.append_trace(trace11, 3, 1)
-fig2.append_trace(trace12, 2, 1)
+fig2 = make_subplots(
+        rows=3,
+        cols=1,
+        shared_xaxes=True,
+        specs=[[{}], [{}], [{}]],
+        vertical_spacing=0.005)
+
+fig2.add_trace(trace5, 1, 1)
+fig2.add_trace(trace6, 3, 1)
+fig2.add_trace(trace7, 2, 1)
+fig2.add_trace(trace8, 1, 1)
+fig2.add_trace(trace9, 3, 1)
+fig2.add_trace(trace10, 1, 1)
+fig2.add_trace(trace11, 3, 1)
+fig2.add_trace(trace12, 2, 1)
+
+fig2.layout.title.text = "GGL_SF_SP9"
 
 
-#fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
-
-plot_url = py.plot(fig2, filename='GGL_SF_SP9')
+plotly.io.write_html(
+    fig2,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP9/GGL_SF_SP9_PythonScripts/GGL_SF_SP9_soil.html'),
+    auto_open=True)
 
 # -------------------------------------------------------------------------------
 
-fig = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+fig = make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig.append_trace(trace13, 1, 1)
-fig.append_trace(trace14, 2, 1)
+
+fig.add_trace(trace13, 1, 1)
+fig.add_trace(trace14, 2, 1)
+fig.layout.title.text = "GGL_SF_SP9_Battery"
+fig.update_yaxes(title_text="Deg C", row=1, col=1)
+fig.update_yaxes(title_text="Volts", row=2, col=1)
 
 
-# axis titles
-fig['layout']['yaxis1'].update(title='Deg C')
-fig['layout']['yaxis2'].update(title='Volts')
-# Plot Title
-fig['layout'].update(title='GGL_SF_SP9 Battery')
-
-
-plot_url = py.plot(fig, filename='GGL_SF_SP9_Battery')
-
-
-
+plotly.io.write_html(
+    fig,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP9/GGL_SF_SP9_PythonScripts/GGL_SF_SP9_battery.html'),
+    auto_open=True)
 
 
 if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):

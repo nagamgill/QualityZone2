@@ -1,15 +1,13 @@
-import QualityZone
+from sites import QualityZone, config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly import tools
+import plotly.io
 import webbrowser
 import click
+from plotly.subplots import make_subplots
 
 
 print("Starting QualityZone")
@@ -174,9 +172,6 @@ trace4 = go.Scatter(
     mode='lines',
     name='SR 60cm T107',
 )
-
-
-
 trace5 = go.Scatter(
     x=plotly_df.index,
     y=plotly_df['Simulated Rain, Soil Moisture, Volumetric Water Content, 5 cm, fraction'],
@@ -306,68 +301,70 @@ trace24 = go.Scatter(
     name='SM 120cm CS616',
 )
 
-fig = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+fig = make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
 
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 1, 1)
-fig.append_trace(trace3, 1, 1)
-fig.append_trace(trace4, 1, 1)
+fig.add_trace(trace1, 1, 1)
+fig.add_trace(trace2, 1, 1)
+fig.add_trace(trace3, 1, 1)
+fig.add_trace(trace4, 1, 1)
 
-fig.append_trace(trace5, 2, 1)
-fig.append_trace(trace6, 2, 1)
-fig.append_trace(trace7, 2, 1)
-fig.append_trace(trace8, 2, 1)
+fig.add_trace(trace5, 2, 1)
+fig.add_trace(trace6, 2, 1)
+fig.add_trace(trace7, 2, 1)
+fig.add_trace(trace8, 2, 1)
 
-fig.append_trace(trace9, 3, 1)
-fig.append_trace(trace10, 3, 1)
-fig.append_trace(trace11, 3, 1)
-fig.append_trace(trace12, 3, 1)
+fig.add_trace(trace9, 3, 1)
+fig.add_trace(trace10, 3, 1)
+fig.add_trace(trace11, 3, 1)
+fig.add_trace(trace12, 3, 1)
 
 
 # axis titles
-fig['layout']['yaxis1'].update(title='Deg C')
-fig['layout']['yaxis2'].update(title='VWC')
-fig['layout']['yaxis3'].update(title='CS616')
+fig.layout.yaxis1.update(title='Deg C')
+fig.layout.yaxis2.update(title='VWC')
+fig.layout.yaxis3.update(title='CS616')
 # Plot Title
-fig['layout'].update(title='GGL_NF_SP5_Simulated_Rain')
+fig.layout.update(title='GGL_NF_SP5_Simulated_Rain')
+
+plotly.io.write_html(
+    fig,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_NF_SP5/GGL_NF_SP5_Python/Soil_SR.html'),
+    auto_open=True)
 
 
-plot_url = py.plot(fig, filename='QualityZone/GGL_NF_SP5/GGL_NF_SP5_sr')
-#plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_SP5\\GGL_NF_SP5_Python\\Soil_SR.html')
-
-
-
-fig2 = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+fig2 = make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
 
-fig2.append_trace(trace13, 1, 1)
-fig2.append_trace(trace14, 1, 1)
-fig2.append_trace(trace15, 1, 1)
-fig2.append_trace(trace16, 1, 1)
+fig2.add_trace(trace13, 1, 1)
+fig2.add_trace(trace14, 1, 1)
+fig2.add_trace(trace15, 1, 1)
+fig2.add_trace(trace16, 1, 1)
 
-fig2.append_trace(trace17, 2, 1)
-fig2.append_trace(trace18, 2, 1)
-fig2.append_trace(trace19, 2, 1)
-fig2.append_trace(trace20, 2, 1)
+fig2.add_trace(trace17, 2, 1)
+fig2.add_trace(trace18, 2, 1)
+fig2.add_trace(trace19, 2, 1)
+fig2.add_trace(trace20, 2, 1)
 
-fig2.append_trace(trace21, 3, 1)
-fig2.append_trace(trace22, 3, 1)
-fig2.append_trace(trace23, 3, 1)
-fig2.append_trace(trace24, 3, 1)
+fig2.add_trace(trace21, 3, 1)
+fig2.add_trace(trace22, 3, 1)
+fig2.add_trace(trace23, 3, 1)
+fig2.add_trace(trace24, 3, 1)
 
-# axis titles
-fig2['layout']['yaxis1'].update(title='Deg C')
-fig2['layout']['yaxis2'].update(title='VWC')
-fig2['layout']['yaxis3'].update(title='CS616')
-# Plot Title
-fig2['layout'].update(title='GGL_NF_SP5_Snow_Melt')
+fig2.layout.yaxis1.update(title='Deg C')
+fig2.layout.yaxis2.update(title='VWC')
+fig2.layout.yaxis3.update(title='CS616')
 
+fig2.layout.update(title='GGL_NF_SP5_Snow_Melt')
 
-plot_url = py.plot(fig2, filename='QualityZone/GGL_NF_SP5/GGL_NF_SP5_sm')
-#plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_SP5\\GGL_NF_SP5_Python\\Soil_SM.html')
+plotly.io.write_html(
+    fig2,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_NF_SP5/GGL_NF_SP5_Python/Soil_sm.html'),
+    auto_open=True)
 
 
 trace25 = go.Scattergl(
@@ -377,9 +374,13 @@ trace25 = go.Scattergl(
     name='Battery Voltage',
 )
 battv = [trace25]
-plot_url = py.plot(battv, filename = 'QualityZone/GGL_NF_SP5/Battery_Voltage_GGL_NF_SP5')
+fig3 = go.Figure(data=battv)
 
-
+plotly.io.write_html(
+    fig3,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_NF_SP5/GGL_NF_SP5_Python/Soil_SR.html'),
+    auto_open=True)
 
 
 if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
@@ -396,5 +397,4 @@ if click.confirm('Save updated dataset to distribute .csv?', default=False):
     QualityZone.df_to_dropbox(dist_df, distribute_path)
     print("distribute .csv formatted for distribution and uploaded to dropbox")
 
-if click.confirm('Delete temporary qc results directory?', default=False):
-    shutil.rmtree('dirpath/')
+

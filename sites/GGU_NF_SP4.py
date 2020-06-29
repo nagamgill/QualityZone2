@@ -1,16 +1,13 @@
-import QualityZone
+from sites import QualityZone, config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly import tools
+import plotly.io
 import webbrowser
 import click
-import shutil
+from plotly.subplots import make_subplots
 
 
 
@@ -19,10 +16,10 @@ print("Checking Dropbox API")
 print(QualityZone.dbx.users_get_current_account())
 
 system_name = 'GGU_NF_SP4'
-dropbox_base = '/Boulder Creek CZO Team Folder/BcCZO'
-master_file = '/Data/GordonGulch/GGU/GGU_NF_SP4/GGU_NF_SP4_ExcelandMeta/GGU_NF_SP4_Master_WY2019.csv'
+dropbox_base = '/CZO/BcCZO'
+master_file = '/Data/GordonGulch/GGU/GGU_NF_SP4/GGU_NF_SP4_ExcelandMeta/GGU_NF_SP4_Master_WY2020.csv'
 new_file = '/Toughbook_Share/GordonGulch/GGU/GGU_NF_SP4/Data/GGU_NF_SP4_CR1000_10minute.dat'
-distribute_file = '/Data/GordonGulch/GGU/GGU_NF_SP4/GGU_NF_SP4_ExcelandMeta/GGU_NF_SP4_Distribute_WY2019.csv'
+distribute_file = '/Data/GordonGulch/GGU/GGU_NF_SP4/GGU_NF_SP4_ExcelandMeta/GGU_NF_SP4_Distribute_WY2020.csv'
 master_path = os.path.join(dropbox_base + master_file)
 new_path = os.path.join(dropbox_base + new_file)
 distribute_path = os.path.join(dropbox_base + distribute_file)
@@ -84,10 +81,10 @@ def format_for_dist(dataframe):
     return dfd
 
 df_master = QualityZone.download_master(master_path)
-df_new = QualityZone.download_new_data(new_path, newcols)
+df_new = QualityZone.download_new_data(new_path, newcols, start_date='2019-10-01')
 df_updated = QualityZone.append_non_duplicates(df_master, df_new)
 
-working_file_path = '/Boulder Creek CZO Team Folder/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv'
+working_file_path = os.path.join(dropbox_base + '/Personnel_Folders/Dillon_Ragar/QualityZone/QZ_working_file.csv')
 QualityZone.df_to_dropbox(df_updated, working_file_path)
 
 pecos.logger.initialize()
@@ -96,7 +93,7 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-6999, 'NAN'])
+pm.check_corrupt([-6999, -7999, 'NAN'])
 pm.check_range([12, 15.1], 'Battery Voltage, minimum, Volts')
 
 mask = pm.get_test_results_mask()
@@ -215,30 +212,45 @@ trace14 = go.Scatter(
 )
 
 data = [trace2, trace3, trace4, trace5]
-py.plot(data, filename='GGU_NF_SP4_Temp')
+fig = go.Figure(data=data)
+
+plotly.io.write_html(
+    fig,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGU/GGU_NF_SP4/GGU_NF_SP4_PythonScripts/GGU_NF_SP4_Temp.html'),
+    auto_open=True)
 
 
-fig1 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+fig1 = make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
                             shared_xaxes=True,
                             vertical_spacing=0.001)
 
-fig1.append_trace(trace6, 1, 1)
-fig1.append_trace(trace8, 1, 1)
-fig1.append_trace(trace10, 1, 1)
-fig1.append_trace(trace13, 1, 1)
+fig1.add_trace(trace6, 1, 1)
+fig1.add_trace(trace8, 1, 1)
+fig1.add_trace(trace10, 1, 1)
+fig1.add_trace(trace13, 1, 1)
 
-fig1.append_trace(trace7, 2, 1)
-fig1.append_trace(trace9, 2, 1)
-fig1.append_trace(trace12, 2, 1)
-fig1.append_trace(trace14, 2, 1)
+fig1.add_trace(trace7, 2, 1)
+fig1.add_trace(trace9, 2, 1)
+fig1.add_trace(trace12, 2, 1)
+fig1.add_trace(trace14, 2, 1)
 
 
-plot_url = py.plot(fig1, filename='GGU_NF_SP4')
+
+plotly.io.write_html(
+    fig1,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGU/GGU_NF_SP4/GGU_NF_SP4_PythonScripts/GGU_NF_SP4_soil.html'),
+    auto_open=True)
 
 battv = [trace1]
+fig3 = go.Figure(data=battv)
 
-py.plot(battv, filename='GGU_NF_SP4_Battery')
-
+plotly.io.write_html(
+    fig3,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGU/GGU_NF_SP4/GGU_NF_SP4_PythonScripts/GGU_NF_SP4_batt.html'),
+    auto_open=True)
 
 
 

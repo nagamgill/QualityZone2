@@ -1,5 +1,5 @@
 *.csv
 .idea/
 dirpath/
-config.py
+sites/config.py
 __pycache__/

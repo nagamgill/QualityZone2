@@ -1,16 +1,13 @@
-import QualityZone
+from sites import QualityZone, config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly import tools
+import plotly.io
 import webbrowser
 import click
-import shutil
+from plotly.subplots import make_subplots
 
 
 
@@ -135,7 +132,7 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-7999, 'NAN'])
+pm.check_corrupt([-7999, -6999, 'NAN'])
 pm.check_range([12, 15.1], 'Battery Voltage, DC Volts')
 pm.check_outlier([None, 3])
 
@@ -254,41 +251,49 @@ trace12 = go.Scatter(
 
 
 
-fig = tools.make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
+fig = make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 1, 1)
-fig.append_trace(trace3, 2, 1)
-fig.append_trace(trace4, 2, 1)
-fig.append_trace(trace5, 3, 1)
-fig.append_trace(trace6, 4, 1)
-fig.append_trace(trace7, 3, 1)
-fig.append_trace(trace8, 4, 1)
+fig.add_trace(trace1, 1, 1)
+fig.add_trace(trace2, 1, 1)
+fig.add_trace(trace3, 2, 1)
+fig.add_trace(trace4, 2, 1)
+fig.add_trace(trace5, 3, 1)
+fig.add_trace(trace6, 4, 1)
+fig.add_trace(trace7, 3, 1)
+fig.add_trace(trace8, 4, 1)
 
 
 
 # axis titles
-fig['layout']['yaxis1'].update(title='VWC Fraction')
-fig['layout']['yaxis2'].update(title='Deg C')
+fig.layout.yaxis1.update(title='VWC Fraction')
+fig.layout.yaxis2.update(title='Deg C')
 # Plot Title
-fig['layout'].update(title='GGU_NF_SP3_Soil')
+fig.layout.update(title='GGU_NF_SP3_Soil')
 
-
-plot_url = py.plot(fig, filename='GGU_NF_SP3_Soil')
-#plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_SP3\\GGL_NF_SP3_PythonScripts\\Soil.html')
+plotly.io.write_html(
+    fig,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_NF_SP3/GGL_NF_SP3_PythonScripts/Soil.html'),
+    auto_open=True)
+#plot_url = py.plot(fig, filename='GGU_NF_SP3_Soil')
+#plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\CZO\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_SP3\\GGL_NF_SP3_PythonScripts\\Soil.html')
 
 #--------------Snow Plot-----------------------------------------------------------------
 
 data = [trace9, trace10, trace11, trace12]
+fig2 = go.Figure(data=data)
 
-plot_url = py.plot(data, filename='Snow')
+plotly.io.write_html(
+    fig2,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_NF_SP3/GGL_NF_SP3_PythonScripts/Snow.html'),
+    auto_open=True)
+#plot_url = py.plot(data, filename='Snow')
 #plotly.offline.plot(data, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_NF_SP3\\GGL_NF_SP3_PythonScripts\\Snow.html')
 
 
 #----------------------------------------------------------------------------------
-
-
 if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
     df_updated = QualityZone.download_master(working_file_path)
     #print(working_file_path.dtypes)

@@ -1,17 +1,14 @@
 import QualityZone
+import config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
 import plotly.graph_objs as go
-import plotly
-from plotly import tools
+import plotly.io
 import webbrowser
 import click
-import shutil
+from plotly.subplots import make_subplots
 
 
 
@@ -280,17 +277,21 @@ trace4 = go.Scattergl(
 )
 
 
-fig = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+fig = make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 2, 1)
-fig.append_trace(trace3, 3, 1)
-fig.append_trace(trace4, 3, 1)
+fig.add_trace(trace1, 1, 1)
+fig.add_trace(trace2, 2, 1)
+fig.add_trace(trace3, 3, 1)
+fig.add_trace(trace4, 3, 1)
 
+plotly.io.write_html(
+    fig,
+    file=os.path.join(config.dropbox_local + '/CZO/BcCZO/Data/Betasso/BetassoMet/QA_QC/BT_Met_Python_Scripts/1.html'),
+    auto_open=True)
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
 
-plot_url = py.plot(fig, filename='BetMet_Met_AirT_RH_Precip')
+#plot_url = py.plot(fig, filename='BetMet_Met_AirT_RH_Precip')
 #plotly.offline.plot(fig, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\1.html')
 
 #-------------------------------Radiation----AirT------------------------------------------------------------------
@@ -319,25 +320,26 @@ trace8 = go.Scattergl(
     name='Air T (10m)'
 )
 
-
-
-fig2 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+fig2 = make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig2.append_trace(trace5, 1, 1)
-fig2.append_trace(trace6, 1, 1)
-fig2.append_trace(trace7, 2, 1)
-fig2.append_trace(trace8, 2, 1)
+fig2.add_trace(trace5, 1, 1)
+fig2.add_trace(trace6, 1, 1)
+fig2.add_trace(trace7, 2, 1)
+fig2.add_trace(trace8, 2, 1)
 
 # axis titles
-fig2['layout']['yaxis1'].update(title='w/m^2')
-fig2['layout']['yaxis2'].update(title='Degrees C')
+fig2.layout.yaxis1.update(title='w/m^2')
+fig2.layout.yaxis2.update(title='Degrees C')
 # Plot Title
-fig2['layout'].update(title='Betasso Met Tower Radiation and Air T')
+fig2.layout.update(title='Betasso Met Tower Radiation and Air T')
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
-
-plot_url = py.plot(fig2, filename='BetMet_Met_Radiation_Air')
+plotly.io.write_html(
+    fig2,
+    file=os.path.join(config.dropbox_local + '/CZO/BcCZO/Data/Betasso/BetassoMet/QA_QC/BT_Met_Python_Scripts/2.html'),
+    auto_open=True)
+#plot_url = py.plot(fig2, filename='BetMet_Met_Radiation_Air')
 #plotly.offline.plot(fig2, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\2.html')
 
 
@@ -370,24 +372,27 @@ trace12 = go.Scattergl(
 
 
 
-fig3 = tools.make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
+fig3 = make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig3.append_trace(trace9, 1, 1)
-fig3.append_trace(trace10, 2, 1)
-fig3.append_trace(trace11, 3, 1)
-fig3.append_trace(trace12, 4, 1)
+fig3.add_trace(trace9, 1, 1)
+fig3.add_trace(trace10, 2, 1)
+fig3.add_trace(trace11, 3, 1)
+fig3.add_trace(trace12, 4, 1)
 # Axis labels
-fig3['layout']['yaxis1'].update(title='w/m^2')
-fig3['layout']['yaxis2'].update(title='')
-fig3['layout']['yaxis3'].update(title='Degrees C')
-fig3['layout']['yaxis4'].update(title='Degrees C')
+fig3.layout.yaxis1.update(title='w/m^2')
+fig3.layout.yaxis2.update(title='')
+fig3.layout.yaxis3.update(title='Degrees C')
+fig3.layout.yaxis4.update(title='Degrees C')
 # Plot Title
-fig3['layout'].update(title='Betasso Met Tower Soil')
+fig3.layout.update(title='Betasso Met Tower Soil')
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
-
-plot_url = py.plot(fig3, filename='BetMet_Met_Soil')
+plotly.io.write_html(
+    fig3,
+    file=os.path.join(config.dropbox_local + '/CZO/BcCZO/Data/Betasso/BetassoMet/QA_QC/BT_Met_Python_Scripts/3.html'),
+    auto_open=True)
+#plot_url = py.plot(fig3, filename='BetMet_Met_Soil')
 #plotly.offline.plot(fig3, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\3.html')
 #-----------------------------------------Precip & Wind-------------------------------------------------
 trace13 = go.Scattergl(
@@ -401,21 +406,24 @@ trace14 = go.Scattergl(
     name='2m wind speed max',
 )
 
-fig4 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+fig4 = make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig4.append_trace(trace13, 1, 1)
-fig4.append_trace(trace14, 2, 1)
+fig4.add_trace(trace13, 1, 1)
+fig4.add_trace(trace14, 2, 1)
 
 # axis titles
-fig4['layout']['yaxis1'].update(title='mm')
-fig4['layout']['yaxis2'].update(title='m/s')
+fig4.layout.yaxis1.update(title='mm')
+fig4.layout.yaxis2.update(title='m/s')
 # Plot Title
-fig4['layout'].update(title='Betasso Met Tower Tipping and Wind Speed')
+fig4.layout.update(title='Betasso Met Tower Tipping and Wind Speed')
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
-
-plot_url = py.plot(fig4, filename='multiple-axes-double')
+plotly.io.write_html(
+    fig4,
+    file=os.path.join(config.dropbox_local + '/CZO/BcCZO/Data/Betasso/BetassoMet/QA_QC/BT_Met_Python_Scripts/4.html'),
+    auto_open=True)
+#plot_url = py.plot(fig4, filename='multiple-axes-double')
 #plotly.offline.plot(fig4, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\4.html')
 
 #-------------------------------Wind--------------------------------------------------------------
@@ -473,22 +481,25 @@ trace22 = go.Scattergl(
 )
 
 
-fig5 = tools.make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
+fig5 = make_subplots(rows=4, cols=1, specs=[[{}], [{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig5.append_trace(trace15, 3, 1)
-fig5.append_trace(trace16, 4, 1)
-fig5.append_trace(trace17, 1, 1)
-fig5.append_trace(trace18, 1, 1)
-fig5.append_trace(trace19, 1, 1)
-fig5.append_trace(trace20, 2, 1)
-fig5.append_trace(trace21, 2, 1)
-fig5.append_trace(trace22, 2, 1)
+fig5.add_trace(trace15, 3, 1)
+fig5.add_trace(trace16, 4, 1)
+fig5.add_trace(trace17, 1, 1)
+fig5.add_trace(trace18, 1, 1)
+fig5.add_trace(trace19, 1, 1)
+fig5.add_trace(trace20, 2, 1)
+fig5.add_trace(trace21, 2, 1)
+fig5.add_trace(trace22, 2, 1)
 
 
 #fig['layout'].update(height=600, width=600, title='Stacked Subplots with Shared X-Axes')
-
-plot_url = py.plot(fig5, filename='BetMet_Met_Wind')
+plotly.io.write_html(
+    fig5,
+    file=os.path.join(config.dropbox_local + '/CZO/BcCZO/Data/Betasso/BetassoMet/QA_QC/BT_Met_Python_Scripts/5.html'),
+    auto_open=True)
+#plot_url = py.plot(fig5, filename='BetMet_Met_Wind')
 #plotly.offline.plot(fig5, filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\Betasso\\BetassoMet\\QA_QC\\BT_Met_Python_Scripts\\5.html')
 #-----------------------------------------------------
 
@@ -500,8 +511,14 @@ trace23 = go.Scattergl(
 )
 
 data = [trace23]
+fig6 = go.Figure(data=data)
 
-plot_url = py.plot(data, filename='BetMet_Met_BattV')
+plotly.io.write_html(
+    fig6,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/Betasso/BetassoMet/QA_QC/BT_Met_Python_Scripts/battv.html'),
+    auto_open=True)
+#plot_url = py.plot(data, filename='BetMet_Met_BattV')
 
 
 

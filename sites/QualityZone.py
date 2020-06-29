@@ -1,9 +1,10 @@
 import glob
 import os
+
+
 import pandas as pd
 import dropbox
 import config
-
 
 dbx = dropbox.Dropbox(config.dropbox_api)
 dbx.users_get_current_account()
@@ -108,7 +109,7 @@ def qc_results_to_dropbox(qc_dir):
             try:
                 file_path = os.path.join(dir, file)
                 dest_path = os.path.join(
-                    '/CZO/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/Results/testing/',
+                    '/CZO/BcCZO/Personnel_Folders/Dillon_Ragar/QualityZone/Results/',
                     file)
                 print('Uploading %s to %s' % (file_path, dest_path))
                 with open(file_path, 'rb') as f:

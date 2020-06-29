@@ -1,18 +1,12 @@
-import QualityZone
+from sites import QualityZone, config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-#import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly import tools
 import plotly.io
 import webbrowser
 import click
-import shutil
-from chart_studio.plotly import plot, iplot
 from plotly.subplots import make_subplots
 
 
@@ -158,24 +152,11 @@ fig.add_trace(trace4, row=4, col=1)
 
 fig.layout.title.text = "GGL_SF_SP6_Soil"
 
-try:
-    plotly.io.write_html(
-        fig,
-        file='/Users/dillon/Dropbox (Boulder Creek CZO)/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP6/GGL_SF_SP6_PythonScripts/Soil.html',
-        auto_open=True
-            )
-except:
-    plotly.io.write_html(
-        fig,
-        file='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_SP6\\GGL_SF_SP6_PythonScripts\\Soil.html',
-        auto_open=True
-        )
-
-
-
-
-
-
+plotly.io.write_html(
+    fig,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP6/GGL_SF_SP6_PythonScripts/Soil.html'),
+    auto_open=True)
 
 trace5 = go.Scatter(
     x=plotly_df.index,
@@ -203,25 +184,17 @@ fig2.add_trace(trace5, row=1, col=1)
 fig2.add_trace(trace6, row=2, col=1)
 fig2.layout.title.text="GGL_SF_SP6_Battery"
 
+plotly.io.write_html(
+    fig2,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP6/GGL_SF_SP6_PythonScripts/Battery.html'),
+    auto_open=True)
 
-
-try:
-    plotly.io.write_html(
-        fig2,
-        file='/Users/dillon/Dropbox (Boulder Creek CZO)/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP6/GGL_SF_SP6_PythonScripts/Battery.html',
-        auto_open=True
-            )
-except:
-    plotly.io.write_html(
-        fig2,
-        file='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_SP6\\GGL_SF_SP6_PythonScripts\\Battery.html',
-        auto_open=True
-        )
 
 #plot_url = py.plot(fig2, filename='QualityZone/GGL_SF_SP6/GGL_SF_SP6_Battery')
 
-url = "/dirpath/GGL_SF_SP6.html"
-webbrowser.open(url, new=2)
+#url = "/dirpath/GGL_SF_SP6.html"
+#webbrowser.open(url, new=2)
 
 
 if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):

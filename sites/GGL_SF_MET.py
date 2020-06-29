@@ -1,17 +1,13 @@
-import QualityZone
+from sites import QualityZone, config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly import tools
+import plotly.io
 import webbrowser
 import click
-import shutil
-
+from plotly.subplots import make_subplots
 
 
 print("Starting QualityZone")
@@ -139,7 +135,7 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-7999, 'NAN'])
+pm.check_corrupt([-7999, -6999, 'NAN'])
 pm.check_range([12, 15.1], 'GGL_SF_Met Battery Voltage Minimum')
 
 mask = pm.get_test_results_mask()
@@ -259,68 +255,80 @@ x = plotly_df.index,
 )
 
 # -------------------------------------------------------------------
-fig = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+fig = make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
                           shared_xaxes=True,
                           vertical_spacing=0.001)
-fig.append_trace(trace1, 1, 1)
-fig.append_trace(trace2, 2, 1)
-fig.append_trace(trace3, 2, 1)
-fig.append_trace(trace4, 3, 1)
-# axis titles
-fig['layout']['yaxis1'].update(title='W/M^2')
-fig['layout']['yaxis2'].update(title='W/M^2')
-fig['layout']['yaxis3'].update(title='Deg C')
-# Plot Title
-fig['layout'].update(title='GGL_SF_Met_Rad_AirT')
+fig.add_trace(trace1, 1, 1)
+fig.add_trace(trace2, 2, 1)
+fig.add_trace(trace3, 2, 1)
+fig.add_trace(trace4, 3, 1)
 
-plot_url = py.plot(fig, filename='GGL_SF_Met_Air_Rad')
-#plotly.offline.plot(fig,
-                    #filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_Met\\GGL_SF_Met_PythonScripts\\1.html')
+fig.layout.title.text = 'GGL_SF_Met_Rad_AirT'
+
+fig.update_yaxes(title_text="W/M^2", row=1, col=1)
+fig.update_yaxes(title_text="W/M^2", row=2, col=1)
+fig.update_yaxes(title_text="Deg C", row=3, col=1)
+
+plotly.io.write_html(
+    fig,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_Met/GGL_SF_Met_PythonScripts/1.html'),
+    auto_open=True
+    )
+
+
+
+
 
 # -------AIR T BATTV-------------------------------------------------------------
-fig2 = tools.make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
+fig2 = make_subplots(rows=2, cols=1, specs=[[{}], [{}]],
                            shared_xaxes=True,
                            vertical_spacing=0.001)
 
-fig2.append_trace(trace5, 1, 1)
-fig2.append_trace(trace6, 1, 1)
-fig2.append_trace(trace7, 1, 1)
-fig2.append_trace(trace8, 2, 1)
-# axis titles
-fig2['layout']['yaxis1'].update(title='M/S')
-fig2['layout']['yaxis2'].update(title='Volts DC')
+fig2.add_trace(trace5, 1, 1)
+fig2.add_trace(trace6, 1, 1)
+fig2.add_trace(trace7, 1, 1)
+fig2.add_trace(trace8, 2, 1)
 
-# Plot Title
-fig2['layout'].update(title='GGL_SF_Met_Wind_BattV')
+fig2.layout.title.text = 'GGL_SF_Met_BattV_AirT'
 
-#plotly.offline.plot(fig2,
-                    #filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_Met\\GGL_SF_Met_PythonScripts\\2.html')
-plot_url = py.plot(fig2, filename='GGL_SF_Met_Wind_Battv')
+fig2.update_yaxes(title_text="M/S", row=1, col=1)
+fig2.update_yaxes(title_text="Volts DC", row=2, col=1)
+
+plotly.io.write_html(
+    fig2,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_Met/GGL_SF_Met_PythonScripts/2.html'),
+    auto_open=True
+    )
+
 
 # --------------------------------------------------------------------
 
-fig3 = tools.make_subplots(rows=5, cols=1, specs=[[{}], [{}], [{}], [{}], [{}]],
+fig3 = make_subplots(rows=5, cols=1, specs=[[{}], [{}], [{}], [{}], [{}]],
                            shared_xaxes=True,
                            vertical_spacing=0.001)
 
-fig3.append_trace(trace9, 1, 1)
-fig3.append_trace(trace10, 2, 1)
-fig3.append_trace(trace11, 3, 1)
-fig3.append_trace(trace12, 4, 1)
-fig3.append_trace(trace13, 5, 1)
-# axis titles
-fig3['layout']['yaxis1'].update(title='MM')
-fig3['layout']['yaxis2'].update(title='%')
-fig3['layout']['yaxis3'].update(title='mB')
-fig3['layout']['yaxis4'].update(title='%')
-fig3['layout']['yaxis5'].update(title='C')
-# Plot Title
-fig3['layout'].update(title='GGL_SF_Met')
+fig3.add_trace(trace9, 1, 1)
+fig3.add_trace(trace10, 2, 1)
+fig3.add_trace(trace11, 3, 1)
+fig3.add_trace(trace12, 4, 1)
+fig3.add_trace(trace13, 5, 1)
 
-plot_url = py.plot(fig3, filename='GGL_SF_Met_3')
-#plotly.offline.plot(fig3,
-                    #filename='D:\\Dropbox (Boulder Creek CZO)\\Dropbox (Boulder Creek CZO)\\Boulder Creek CZO Team Folder\\BcCZO\\Data\\GordonGulch\\GGL\\GGL_SF_Met\\GGL_SF_Met_PythonScripts\\3.html')
+fig3.update_yaxes(title_text="MM", row=1, col=1)
+fig3.update_yaxes(title_text="%", row=2, col=1)
+fig3.update_yaxes(title_text="MB", row=3, col=1)
+fig3.update_yaxes(title_text="%", row=4, col=1)
+fig3.update_yaxes(title_text="C", row=5, col=1)
 
+fig3.layout.title.text = 'GGL_SF_Met_Met'
+
+plotly.io.write_html(
+    fig3,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_Met/GGL_SF_Met_PythonScripts/3.html'),
+    auto_open=True
+    )
 
 
 

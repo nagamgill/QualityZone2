@@ -1,17 +1,13 @@
-import QualityZone
+from sites import QualityZone, config
 import os
-from io import StringIO
 import tempfile
 import pecos
-import matplotlib as plt
 import matplotlib.pyplot as plt
-import plotly.plotly as py
 import plotly.graph_objs as go
-from plotly import tools
+import plotly.io
 import webbrowser
 import click
-import pandas as pd
-import numpy as np
+from plotly.subplots import make_subplots
 
 
 
@@ -118,8 +114,11 @@ def format_for_dist(dataframe):
     'GGSD_11, Retries, number',
     'Record Number (datalogger value)',
     'Battery Voltage, Minimum, DC Volts',
-    'Wiring Panel Temperature, Average, Deg C'
-
+    'Wiring Panel Temperature, Average, Deg C',
+    'Simulated Rain, 5 cm, CS616 period average, u sec',
+    'Simulated Rain, 25 cm, CS616 period average, u sec',
+    'Snow Melt, 5 cm, CS616 period average, u sec',
+    'Snow Melt, 25 cm, CS616 period average, u sec'
     ], axis=1)
 
     dist_columns = {
@@ -158,7 +157,7 @@ df = df_updated.copy()
 pm.add_dataframe(df)
 pm.check_timestamp(600)
 pm.check_missing(min_failures=1)
-pm.check_corrupt([-6999, 'NAN'])
+pm.check_corrupt([-6999, -7999, 'NAN'])
 pm.check_corrupt(['NaN', 'Na', 'na', 'np.nan', 'nan'])
 pm.check_corrupt(corrupt_values=['nan','NAN'])
 pm.check_range([12, 15.1], 'Battery Voltage, Minimum, DC Volts')
@@ -334,7 +333,6 @@ trace20 = go.Scattergl(
     ),
     name='GGSD_11'
 )
-
 trace21 = go.Scattergl(
     x=plotly_df.index,
     y=plotly_df['Battery Voltage, Minimum, DC Volts'],
@@ -343,26 +341,36 @@ trace21 = go.Scattergl(
 )
 
 
-fig1 = tools.make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
+fig1 = make_subplots(rows=3, cols=1, specs=[[{}], [{}], [{}]],
                             shared_xaxes=True,
                             vertical_spacing=0.001)
-fig1.append_trace(trace1, 1, 1)
-fig1.append_trace(trace4, 1, 1)
-fig1.append_trace(trace8, 1, 1)
-fig1.append_trace(trace11, 1, 1)
+fig1.add_trace(trace1, 1, 1)
+fig1.add_trace(trace4, 1, 1)
+fig1.add_trace(trace8, 1, 1)
+fig1.add_trace(trace11, 1, 1)
 
-fig1.append_trace(trace2, 2, 1)
-fig1.append_trace(trace5, 2, 1)
-fig1.append_trace(trace9, 2, 1)
-fig1.append_trace(trace12, 2, 1)
+fig1.add_trace(trace2, 2, 1)
+fig1.add_trace(trace5, 2, 1)
+fig1.add_trace(trace9, 2, 1)
+fig1.add_trace(trace12, 2, 1)
 
-fig1.append_trace(trace3, 3, 1)
-fig1.append_trace(trace6, 3, 1)
-fig1.append_trace(trace10, 3, 1)
-fig1.append_trace(trace13, 3, 1)
+fig1.add_trace(trace3, 3, 1)
+fig1.add_trace(trace6, 3, 1)
+fig1.add_trace(trace10, 3, 1)
+fig1.add_trace(trace13, 3, 1)
 
-fig1['layout'].update(title='GGL_SF_SP10')
-plot_url = py.plot(fig1, filename='GGL_SF_SP10', auto_open=True)
+
+fig1.layout.title.text = "GGL_SF_SP10"
+
+#fig1['layout'].update(title='GGL_SF_SP10')
+#plot_url = py.plot(fig1, filename='GGL_SF_SP10', auto_open=True)
+
+plotly.io.write_html(
+    fig1,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP10/GGL_SF_SP10_Plots/GGL_SF_SP10.html'),
+    auto_open=True)
+
 # --------------------------------------------------------------------------------------
 data = [trace21]
 layout = go.Layout(
@@ -370,24 +378,39 @@ layout = go.Layout(
 )
 battv = go.Figure(data=data, layout=layout)
 
-plot_url = py.iplot(battv, filename='GGL_SF_SP10_Battery', auto_open=True)
+#plot_url = py.iplot(battv, filename='GGL_SF_SP10_Battery', auto_open=True)
+
+plotly.io.write_html(
+        battv,
+        file=os.path.join(
+            config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP10/GGL_SF_SP10_Plots/GGL_SF_SP10_battv.html'),
+        auto_open=True
+        )
+
 
 # -------------------------------------------------------------------------------
-fig2 = tools.make_subplots(rows=7, cols=1, specs=[[{}], [{}], [{}], [{}], [{}], [{}], [{}]],
+fig2 = make_subplots(rows=7, cols=1, specs=[[{}], [{}], [{}], [{}], [{}], [{}], [{}]],
                             shared_xaxes=True,
                             vertical_spacing=0.001)
 
-fig2.append_trace(trace14, 1, 1)
-fig2.append_trace(trace15, 2, 1)
-fig2.append_trace(trace16, 3, 1)
-fig2.append_trace(trace17, 4, 1)
-fig2.append_trace(trace18, 5, 1)
-fig2.append_trace(trace19, 6, 1)
-fig2.append_trace(trace20, 7, 1)
+fig2.add_trace(trace14, 1, 1)
+fig2.add_trace(trace15, 2, 1)
+fig2.add_trace(trace16, 3, 1)
+fig2.add_trace(trace17, 4, 1)
+fig2.add_trace(trace18, 5, 1)
+fig2.add_trace(trace19, 6, 1)
+fig2.add_trace(trace20, 7, 1)
 
-fig2['layout'].update(title='GGL_SF_SP10_Snow_Depth')
+fig2.layout.title.text = 'GGL_SF_SP10_Snow_Depth'
 
-plot_url = py.iplot(fig2, filename='GGL_SF_SP10_Snow_Depth', auto_open=True)
+#plot_url = py.iplot(fig2, filename='GGL_SF_SP10_Snow_Depth', auto_open=True)
+
+plotly.io.write_html(
+    fig2,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP10/GGL_SF_SP10_Plots/GGL_SF_SP10_snow.html'),
+    auto_open=True
+    )
 
 #--------------Snow Plot-----------------------------------------------------------------
 
@@ -397,7 +420,14 @@ layout3 = go.Layout(
 )
 
 fig3 = go.Figure(data=data3, layout=layout3)
-plot_url = py.plot(fig3, filename='GGL_SF_SP10_Snow_Depth_Alternate')
+#plot_url = py.plot(fig3, filename='GGL_SF_SP10_Snow_Depth_Alternate')
+
+plotly.io.write_html(
+    fig3,
+    file=os.path.join(
+        config.dropbox_local + '/CZO/BcCZO/Data/GordonGulch/GGL/GGL_SF_SP10/GGL_SF_SP10_Plots/GGL_SF_SP10_snow_alt.html'),
+    auto_open=True
+    )
 
 
 if click.confirm('Did you make changes to the data via the "QualityZone_working_data.csv" file?', default=False):
